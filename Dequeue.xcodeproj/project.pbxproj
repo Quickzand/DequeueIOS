@@ -11,6 +11,7 @@
 		34195DA32AAC2BFB00EA2FFA /* BackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34195DA22AAC2BFB00EA2FFA /* BackgroundView.swift */; };
 		34205B402AAD36B00083E6C2 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34205B3F2AAD36B00083E6C2 /* SettingsView.swift */; };
 		34205B432AAD61990083E6C2 /* SubmenuToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34205B422AAD61990083E6C2 /* SubmenuToolbarView.swift */; };
+		34205B452AADAC5C0083E6C2 /* ActionCreationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34205B442AADAC5C0083E6C2 /* ActionCreationView.swift */; };
 		342347022AA9630400A287E2 /* DequeueApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342347012AA9630400A287E2 /* DequeueApp.swift */; };
 		342347042AA9630400A287E2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342347032AA9630400A287E2 /* ContentView.swift */; };
 		342347062AA9630500A287E2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 342347052AA9630500A287E2 /* Assets.xcassets */; };
@@ -49,6 +50,7 @@
 		34205B3F2AAD36B00083E6C2 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		34205B412AAD57680083E6C2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		34205B422AAD61990083E6C2 /* SubmenuToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmenuToolbarView.swift; sourceTree = "<group>"; };
+		34205B442AADAC5C0083E6C2 /* ActionCreationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionCreationView.swift; sourceTree = "<group>"; };
 		342346FE2AA9630400A287E2 /* Dequeue.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Dequeue.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		342347012AA9630400A287E2 /* DequeueApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DequeueApp.swift; sourceTree = "<group>"; };
 		342347032AA9630400A287E2 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -95,6 +97,7 @@
 		342346F52AA9630400A287E2 = {
 			isa = PBXGroup;
 			children = (
+				34205B442AADAC5C0083E6C2 /* ActionCreationView.swift */,
 				34205B422AAD61990083E6C2 /* SubmenuToolbarView.swift */,
 				342347002AA9630400A287E2 /* Dequeue */,
 				342347112AA9630500A287E2 /* DequeueTests */,
@@ -303,6 +306,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3423472F2AAA144400A287E2 /* ConnectToHostView.swift in Sources */,
+				34205B452AADAC5C0083E6C2 /* ActionCreationView.swift in Sources */,
 				34195DA12AAC25A000EA2FFA /* HomeView.swift in Sources */,
 				349F79712AAC416C003062D8 /* ToolbarView.swift in Sources */,
 				34195DA32AAC2BFB00EA2FFA /* BackgroundView.swift in Sources */,

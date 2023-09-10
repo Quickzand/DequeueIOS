@@ -19,6 +19,7 @@ struct ConnectToHostView: View {
     @ObservedObject var scanner = NetworkScanner()
     
     var body : some View {
+        NavigationStack {
             VStack {
                 DetectedHostsListView(detectedHosts: $scanner.detectedHosts, scanner: scanner, appState: appState)
                 Spacer()
@@ -61,7 +62,7 @@ struct ConnectToHostView: View {
                 scanner.startScan()
             }
             
-        
+        }
             
     }
     

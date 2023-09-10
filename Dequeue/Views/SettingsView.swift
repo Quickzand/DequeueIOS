@@ -19,8 +19,12 @@ struct SettingsView: View {
 struct SettingsItemView : View {
     var title : String
     var iconName : String
+    @State var connectToHostView : Bool = false
+    
     var body : some View {
-        Button(action: {}) {
+        Button(action: {
+            connectToHostView = true
+        }) {
             HStack {
                 Image(systemName: iconName)
                 Text(title)
@@ -31,6 +35,9 @@ struct SettingsItemView : View {
             .frame(maxWidth:.infinity)
             .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 15))
             .padding()
+        }
+        .navigationDestination(isPresented: $connectToHostView) {
+            ConnectToHostView()
         }
         .foregroundColor(.white)
     }

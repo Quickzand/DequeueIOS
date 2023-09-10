@@ -119,6 +119,7 @@ func connectToHost(host: Host, appState: AppState, alreadySaved : Bool = false) 
         DispatchQueue.main.async {
 
             appState.connectedHost = host
+            appState.showHome = true
         }
     }
     

@@ -15,6 +15,10 @@ struct ContentView: View {
             ZStack {
                     ConnectToHostView()
                         .environmentObject(appState)
+                        .navigationDestination(isPresented: $appState.showHome) {
+                            HomeView()
+                                .navigationBarHidden(true) 
+                        }
             }
             .background(BackgroundView().allowsHitTesting(false))
         }

@@ -11,42 +11,43 @@ struct ToolbarView: View {
     @EnvironmentObject var appState : AppState
     
     var body: some View {
-        VStack {
-            HStack {
+            HStack (spacing: 10) {
                 Button(action: {
                     appState.showSettings = true
-                    print("SHOW IT BABY OH YEAH")
                 }) {
                     Image(systemName: "gear")
-                        .padding()
+                        .padding(.all, 15)
                         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 15))
-                        .font(.system(size:30, weight: .bold))
+                        .font(.system(size:25, weight: .bold))
                         .foregroundColor(.white)
+                        .padding()
                 }
+                Spacer()
       
                 Button(action: {}) {
                     Image(systemName: "pencil")
-                        .padding()
-                        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 15))
-                        .font(.system(size:30, weight: .bold))
-                        .foregroundColor(.white)
-                }
-                Button(action: {}) {
-                    Image(systemName: "plus")
-                        .padding()
+                        .padding(.all, 15)
                         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 15))
                         .font(.system(size:30, weight: .bold))
                         .foregroundColor(.white)
                 }
                 Spacer()
+                Button(action: {
+                    appState.showCreateAction = true
+                }) {
+                    Image(systemName: "plus")
+                        .padding(.all, 15)
+                        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 15))
+                        .font(.system(size:30, weight: .bold))
+                        .foregroundColor(.white)
+                        .padding()
+                }
             }
-            Spacer()
-        }.background(BackgroundView().allowsHitTesting(false).blur(radius: 15))
     }
 }
 
-//struct ToolbarView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ToolbarView()
-//    }
-//}
+struct ToolbarView_Previews: PreviewProvider {
+    static var previews: some View {
+        ToolbarView().environmentObject(AppState())
+    }
+}

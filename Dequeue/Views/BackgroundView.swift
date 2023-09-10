@@ -33,7 +33,7 @@ struct BackgroundView: View {
 
     var rows: Int {
         let totalHeight = UIScreen.main.bounds.height
-        return Int((totalHeight + gap) / (adjustedSquareSize + gap))
+        return Int((totalHeight + gap) / (adjustedSquareSize + gap)) + 2
     }
 
     let timer = Timer.publish(every: 0.5, on: .main, in: .common).autoconnect() // Change opacity every 1.5 seconds
@@ -41,7 +41,7 @@ struct BackgroundView: View {
     var body: some View {
         ZStack {
             // Full-screen gradient
-            LinearGradient(gradient: Gradient(colors: [Color.red, Color.blue]), startPoint: .top, endPoint: .bottom)
+            LinearGradient(gradient: Gradient(colors: [Color("AccentColor"), Color.blue]), startPoint: .top, endPoint: .bottom)
                 .ignoresSafeArea()
 
             // Grid of squares as a mask
@@ -60,6 +60,7 @@ struct BackgroundView: View {
                 .padding(.all, gap/2)
             )
         }
+        .blur(radius: 15)
         .onReceive(timer) { _ in
             let randomIndex = Int.random(in: 0..<opacities.count)
             opacities[randomIndex] = 0.5 // Set opacity to 0.1
