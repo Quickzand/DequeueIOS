@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		34195DA12AAC25A000EA2FFA /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34195DA02AAC25A000EA2FFA /* HomeView.swift */; };
+		34195DA32AAC2BFB00EA2FFA /* BackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34195DA22AAC2BFB00EA2FFA /* BackgroundView.swift */; };
+		34205B402AAD36B00083E6C2 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34205B3F2AAD36B00083E6C2 /* SettingsView.swift */; };
+		34205B432AAD61990083E6C2 /* SubmenuToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34205B422AAD61990083E6C2 /* SubmenuToolbarView.swift */; };
 		342347022AA9630400A287E2 /* DequeueApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342347012AA9630400A287E2 /* DequeueApp.swift */; };
 		342347042AA9630400A287E2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342347032AA9630400A287E2 /* ContentView.swift */; };
 		342347062AA9630500A287E2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 342347052AA9630500A287E2 /* Assets.xcassets */; };
@@ -14,6 +18,12 @@
 		342347132AA9630500A287E2 /* DequeueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342347122AA9630500A287E2 /* DequeueTests.swift */; };
 		3423471D2AA9630500A287E2 /* DequeueUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3423471C2AA9630500A287E2 /* DequeueUITests.swift */; };
 		3423471F2AA9630500A287E2 /* DequeueUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3423471E2AA9630500A287E2 /* DequeueUITestsLaunchTests.swift */; };
+		3423472C2AA967DF00A287E2 /* HostScanning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3423472B2AA967DF00A287E2 /* HostScanning.swift */; };
+		3423472F2AAA144400A287E2 /* ConnectToHostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3423472E2AAA144400A287E2 /* ConnectToHostView.swift */; };
+		342347312AAA408A00A287E2 /* QRCodeScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342347302AAA408A00A287E2 /* QRCodeScannerView.swift */; };
+		342347342AAA461D00A287E2 /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; productRef = 342347332AAA461D00A287E2 /* CodeScanner */; };
+		349F79712AAC416C003062D8 /* ToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349F79702AAC416C003062D8 /* ToolbarView.swift */; };
+		34DBD2572AAA761F00C7D641 /* CustomColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DBD2562AAA761F00C7D641 /* CustomColors.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,6 +44,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		34195DA02AAC25A000EA2FFA /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		34195DA22AAC2BFB00EA2FFA /* BackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundView.swift; sourceTree = "<group>"; };
+		34205B3F2AAD36B00083E6C2 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		34205B412AAD57680083E6C2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		34205B422AAD61990083E6C2 /* SubmenuToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmenuToolbarView.swift; sourceTree = "<group>"; };
 		342346FE2AA9630400A287E2 /* Dequeue.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Dequeue.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		342347012AA9630400A287E2 /* DequeueApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DequeueApp.swift; sourceTree = "<group>"; };
 		342347032AA9630400A287E2 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -44,6 +59,11 @@
 		342347182AA9630500A287E2 /* DequeueUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DequeueUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3423471C2AA9630500A287E2 /* DequeueUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DequeueUITests.swift; sourceTree = "<group>"; };
 		3423471E2AA9630500A287E2 /* DequeueUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DequeueUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		3423472B2AA967DF00A287E2 /* HostScanning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostScanning.swift; sourceTree = "<group>"; };
+		3423472E2AAA144400A287E2 /* ConnectToHostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectToHostView.swift; sourceTree = "<group>"; };
+		342347302AAA408A00A287E2 /* QRCodeScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeScannerView.swift; sourceTree = "<group>"; };
+		349F79702AAC416C003062D8 /* ToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarView.swift; sourceTree = "<group>"; };
+		34DBD2562AAA761F00C7D641 /* CustomColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomColors.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,6 +71,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				342347342AAA461D00A287E2 /* CodeScanner in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -74,6 +95,7 @@
 		342346F52AA9630400A287E2 = {
 			isa = PBXGroup;
 			children = (
+				34205B422AAD61990083E6C2 /* SubmenuToolbarView.swift */,
 				342347002AA9630400A287E2 /* Dequeue */,
 				342347112AA9630500A287E2 /* DequeueTests */,
 				3423471B2AA9630500A287E2 /* DequeueUITests */,
@@ -94,10 +116,12 @@
 		342347002AA9630400A287E2 /* Dequeue */ = {
 			isa = PBXGroup;
 			children = (
-				342347012AA9630400A287E2 /* DequeueApp.swift */,
-				342347032AA9630400A287E2 /* ContentView.swift */,
+				34205B412AAD57680083E6C2 /* Info.plist */,
+				3423472D2AA967F500A287E2 /* Views */,
 				342347052AA9630500A287E2 /* Assets.xcassets */,
 				342347072AA9630500A287E2 /* Preview Content */,
+				3423472B2AA967DF00A287E2 /* HostScanning.swift */,
+				34DBD2562AAA761F00C7D641 /* CustomColors.swift */,
 			);
 			path = Dequeue;
 			sourceTree = "<group>";
@@ -127,6 +151,21 @@
 			path = DequeueUITests;
 			sourceTree = "<group>";
 		};
+		3423472D2AA967F500A287E2 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				342347012AA9630400A287E2 /* DequeueApp.swift */,
+				342347032AA9630400A287E2 /* ContentView.swift */,
+				3423472E2AAA144400A287E2 /* ConnectToHostView.swift */,
+				342347302AAA408A00A287E2 /* QRCodeScannerView.swift */,
+				34195DA02AAC25A000EA2FFA /* HomeView.swift */,
+				34195DA22AAC2BFB00EA2FFA /* BackgroundView.swift */,
+				349F79702AAC416C003062D8 /* ToolbarView.swift */,
+				34205B3F2AAD36B00083E6C2 /* SettingsView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -143,6 +182,9 @@
 			dependencies = (
 			);
 			name = Dequeue;
+			packageProductDependencies = (
+				342347332AAA461D00A287E2 /* CodeScanner */,
+			);
 			productName = Dequeue;
 			productReference = 342346FE2AA9630400A287E2 /* Dequeue.app */;
 			productType = "com.apple.product-type.application";
@@ -215,6 +257,9 @@
 				Base,
 			);
 			mainGroup = 342346F52AA9630400A287E2;
+			packageReferences = (
+				342347322AAA461D00A287E2 /* XCRemoteSwiftPackageReference "CodeScanner" */,
+			);
 			productRefGroup = 342346FF2AA9630400A287E2 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -257,8 +302,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3423472F2AAA144400A287E2 /* ConnectToHostView.swift in Sources */,
+				34195DA12AAC25A000EA2FFA /* HomeView.swift in Sources */,
+				349F79712AAC416C003062D8 /* ToolbarView.swift in Sources */,
+				34195DA32AAC2BFB00EA2FFA /* BackgroundView.swift in Sources */,
 				342347042AA9630400A287E2 /* ContentView.swift in Sources */,
+				34205B402AAD36B00083E6C2 /* SettingsView.swift in Sources */,
+				3423472C2AA967DF00A287E2 /* HostScanning.swift in Sources */,
 				342347022AA9630400A287E2 /* DequeueApp.swift in Sources */,
+				34DBD2572AAA761F00C7D641 /* CustomColors.swift in Sources */,
+				342347312AAA408A00A287E2 /* QRCodeScannerView.swift in Sources */,
+				34205B432AAD61990083E6C2 /* SubmenuToolbarView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -420,11 +474,15 @@
 				DEVELOPMENT_TEAM = LN92DAL645;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Dequeue/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "The camera is used to scan QR codes from your computer!";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = PLEASE;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -449,11 +507,15 @@
 				DEVELOPMENT_TEAM = LN92DAL645;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Dequeue/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "The camera is used to scan QR codes from your computer!";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = PLEASE;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -583,6 +645,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		342347322AAA461D00A287E2 /* XCRemoteSwiftPackageReference "CodeScanner" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/twostraws/CodeScanner";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		342347332AAA461D00A287E2 /* CodeScanner */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 342347322AAA461D00A287E2 /* XCRemoteSwiftPackageReference "CodeScanner" */;
+			productName = CodeScanner;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 342346F62AA9630400A287E2 /* Project object */;
 }
