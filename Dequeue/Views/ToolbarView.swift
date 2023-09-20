@@ -20,7 +20,7 @@ struct ToolbarView: View {
                         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 15))
                         .font(.system(size:25, weight: .bold))
                         .foregroundColor(.white)
-                        .padding()
+                        .padding(.horizontal)
                 }
                 Spacer()
       
@@ -40,7 +40,7 @@ struct ToolbarView: View {
                         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 15))
                         .font(.system(size:30, weight: .bold))
                         .foregroundColor(.white)
-                        .padding()
+                        .padding(.horizontal)
                 }
             }
     }

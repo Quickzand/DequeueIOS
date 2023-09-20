@@ -227,6 +227,9 @@ struct DetectedHostView: View {
                 RoundedRectangle(cornerRadius: 16.0)
         )
         .foregroundColor(Color.white)
+        .onAppear(perform: {
+            print("HERE")
+        })
         
         
     }

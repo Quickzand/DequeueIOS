@@ -6,6 +6,9 @@
 //
 
 import Foundation
+
+var isScanning: Bool = false
+
 let portUsed : Int = 2326
 func isPortOpen(host: String, port: Int, timeout: TimeInterval, completion: @escaping (Bool, String, String) -> Void) {
     // Create a URL from the host and port
@@ -30,8 +33,9 @@ func isPortOpen(host: String, port: Int, timeout: TimeInterval, completion: @esc
                     print("++ Content of \(host):\(port):\n\(content)")
                     completion(true, content, host)
                 }
-                
-                completion(false, "",host)
+                else {
+                    completion(false, "",host)
+                }
                 
             } else {
                 print("++ Failed: Received non-success status code \(httpResponse.statusCode) for \(host):\(port)")
@@ -107,6 +111,7 @@ func connectToHost(host: Host, appState: AppState, alreadySaved : Bool = false) 
         if let data = data, let content = String(data: data, encoding: .utf8) {
             // Do something with the data
             print("Received data: \(content)")
+
         }
         
         if(!alreadySaved) {
@@ -130,27 +135,7 @@ func connectToHost(host: Host, appState: AppState, alreadySaved : Bool = false) 
 }
 
 
-struct Host : Hashable, Encodable, Decodable {
-    var name: String
-    var ip: String
-    var code: String
-    
-    
-    func sanitizedName() -> String {
-        var tempName = name
-        
-        // Remove .local from the name
-        if tempName.hasSuffix(".local") {
-            tempName = String(tempName.dropLast(".local".count))
-        }
-        
-        // Capitalize the first character
-        tempName = tempName.prefix(1).capitalized + tempName.dropFirst()
-        
-        return tempName
-    }
 
-}
 
 
 // Save the list of devices to UserDefaults
@@ -171,31 +156,42 @@ class NetworkScanner: ObservableObject {
     
     func startScan() {
         self.detectedHosts = []
-        isPortOpen(host: "192.168.0.2", port: portUsed, timeout: 1.5) {(isOpen: Bool, name: String, ip:String) in
-            if(isOpen) {
-                self.detectedHosts.append(Host(name: name, ip: ip,code: ""))
-            }
-        }
-//        let port = 80
-//        let subnetsToScan = ["192.168.0.", "192.168.1.", "192.168.2."] // Add more as needed
-//        
-//        let dispatchGroup = DispatchGroup()
-//        
-//        for subnet in subnetsToScan {
-//            for i in 1...254 {
-//                dispatchGroup.enter()
-//                let ip = "\(subnet)\(i)"
-//                
-//                isPortOpen(host: ip, port: port, timeout: 2.0) { isOpen in
-//                    if isOpen {
-//                        DispatchQueue.main.async {
-//                            self.detectedHosts.append(ip)
-//                        }
-//                    }
-//                    dispatchGroup.leave()
-//                }
+//        isPortOpen(host: "192.168.0.2", port: portUsed, timeout: 1.5) {(isOpen: Bool, name: String, ip:String) in
+//            if(isOpen) {
+//                self.detectedHosts.append(Host(name: name, ip: ip,code: ""))
 //            }
 //        }
+//        
+//    } bb
+        
+        let port = portUsed  // Use the same port you defined earlier
+        let subnetsToScan = ["192.168.0.", "10.32.195.", "10.108.12."]  // Add more subnets as needed
+        
+        let dispatchGroup = DispatchGroup()
+        
+        isScanning = true  // Set the flag to true when scanning starts
+        
+        for subnet in subnetsToScan {
+            for i in 1...254 {
+                let ip = "\(subnet)\(i)"
+                dispatchGroup.enter()
+                
+                isPortOpen(host: ip, port: port, timeout: 4.5) { (isOpen: Bool, name: String, ip: String) in
+                    if isOpen && isScanning {  // Check the flag before attempting to connect
+                        DispatchQueue.main.async {
+                            self.detectedHosts.append(Host(name: name, ip: ip, code: ""))
+                        }
+                    }
+                    dispatchGroup.leave()
+                }
+            }
+        }
+        
+        dispatchGroup.notify(queue: .main) {
+            print("Scanning finished!")
+            // Do anything else you need after the scanning is completed
+        }
     }
 }
+
  

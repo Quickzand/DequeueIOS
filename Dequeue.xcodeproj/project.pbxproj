@@ -24,6 +24,11 @@
 		342347312AAA408A00A287E2 /* QRCodeScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342347302AAA408A00A287E2 /* QRCodeScannerView.swift */; };
 		342347342AAA461D00A287E2 /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; productRef = 342347332AAA461D00A287E2 /* CodeScanner */; };
 		349F79712AAC416C003062D8 /* ToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349F79702AAC416C003062D8 /* ToolbarView.swift */; };
+		34C1000D2AAE991F003F048E /* SymbolPicker in Frameworks */ = {isa = PBXBuildFile; productRef = 34C1000C2AAE991F003F048E /* SymbolPicker */; };
+		34C100102AAEB0BF003F048E /* SystemImagePicker in Frameworks */ = {isa = PBXBuildFile; productRef = 34C1000F2AAEB0BF003F048E /* SystemImagePicker */; };
+		34DA58F12AAF898000834982 /* HostController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DA58F02AAF898000834982 /* HostController.swift */; };
+		34DA58F32AB0D92500834982 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DA58F22AB0D92500834982 /* Extensions.swift */; };
+		34DA58F62AB233ED00834982 /* BackgroundSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DA58F52AB233ED00834982 /* BackgroundSettingsView.swift */; };
 		34DBD2572AAA761F00C7D641 /* CustomColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DBD2562AAA761F00C7D641 /* CustomColors.swift */; };
 /* End PBXBuildFile section */
 
@@ -65,6 +70,9 @@
 		3423472E2AAA144400A287E2 /* ConnectToHostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectToHostView.swift; sourceTree = "<group>"; };
 		342347302AAA408A00A287E2 /* QRCodeScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeScannerView.swift; sourceTree = "<group>"; };
 		349F79702AAC416C003062D8 /* ToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarView.swift; sourceTree = "<group>"; };
+		34DA58F02AAF898000834982 /* HostController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostController.swift; sourceTree = "<group>"; };
+		34DA58F22AB0D92500834982 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		34DA58F52AB233ED00834982 /* BackgroundSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundSettingsView.swift; sourceTree = "<group>"; };
 		34DBD2562AAA761F00C7D641 /* CustomColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomColors.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -73,7 +81,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				34C1000D2AAE991F003F048E /* SymbolPicker in Frameworks */,
 				342347342AAA461D00A287E2 /* CodeScanner in Frameworks */,
+				34C100102AAEB0BF003F048E /* SystemImagePicker in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -97,8 +107,6 @@
 		342346F52AA9630400A287E2 = {
 			isa = PBXGroup;
 			children = (
-				34205B442AADAC5C0083E6C2 /* ActionCreationView.swift */,
-				34205B422AAD61990083E6C2 /* SubmenuToolbarView.swift */,
 				342347002AA9630400A287E2 /* Dequeue */,
 				342347112AA9630500A287E2 /* DequeueTests */,
 				3423471B2AA9630500A287E2 /* DequeueUITests */,
@@ -119,11 +127,13 @@
 		342347002AA9630400A287E2 /* Dequeue */ = {
 			isa = PBXGroup;
 			children = (
+				34DA58F22AB0D92500834982 /* Extensions.swift */,
 				34205B412AAD57680083E6C2 /* Info.plist */,
 				3423472D2AA967F500A287E2 /* Views */,
 				342347052AA9630500A287E2 /* Assets.xcassets */,
 				342347072AA9630500A287E2 /* Preview Content */,
 				3423472B2AA967DF00A287E2 /* HostScanning.swift */,
+				34DA58F02AAF898000834982 /* HostController.swift */,
 				34DBD2562AAA761F00C7D641 /* CustomColors.swift */,
 			);
 			path = Dequeue;
@@ -157,6 +167,9 @@
 		3423472D2AA967F500A287E2 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				34DA58F42AB233B600834982 /* Settings */,
+				34205B422AAD61990083E6C2 /* SubmenuToolbarView.swift */,
+				34205B442AADAC5C0083E6C2 /* ActionCreationView.swift */,
 				342347012AA9630400A287E2 /* DequeueApp.swift */,
 				342347032AA9630400A287E2 /* ContentView.swift */,
 				3423472E2AAA144400A287E2 /* ConnectToHostView.swift */,
@@ -164,9 +177,17 @@
 				34195DA02AAC25A000EA2FFA /* HomeView.swift */,
 				34195DA22AAC2BFB00EA2FFA /* BackgroundView.swift */,
 				349F79702AAC416C003062D8 /* ToolbarView.swift */,
-				34205B3F2AAD36B00083E6C2 /* SettingsView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		34DA58F42AB233B600834982 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				34205B3F2AAD36B00083E6C2 /* SettingsView.swift */,
+				34DA58F52AB233ED00834982 /* BackgroundSettingsView.swift */,
+			);
+			path = Settings;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -187,6 +208,8 @@
 			name = Dequeue;
 			packageProductDependencies = (
 				342347332AAA461D00A287E2 /* CodeScanner */,
+				34C1000C2AAE991F003F048E /* SymbolPicker */,
+				34C1000F2AAEB0BF003F048E /* SystemImagePicker */,
 			);
 			productName = Dequeue;
 			productReference = 342346FE2AA9630400A287E2 /* Dequeue.app */;
@@ -262,6 +285,8 @@
 			mainGroup = 342346F52AA9630400A287E2;
 			packageReferences = (
 				342347322AAA461D00A287E2 /* XCRemoteSwiftPackageReference "CodeScanner" */,
+				34C1000B2AAE991F003F048E /* XCRemoteSwiftPackageReference "SymbolPicker" */,
+				34C1000E2AAEB0BF003F048E /* XCRemoteSwiftPackageReference "SystemImagePicker" */,
 			);
 			productRefGroup = 342346FF2AA9630400A287E2 /* Products */;
 			projectDirPath = "";
@@ -307,16 +332,19 @@
 			files = (
 				3423472F2AAA144400A287E2 /* ConnectToHostView.swift in Sources */,
 				34205B452AADAC5C0083E6C2 /* ActionCreationView.swift in Sources */,
+				34DA58F12AAF898000834982 /* HostController.swift in Sources */,
 				34195DA12AAC25A000EA2FFA /* HomeView.swift in Sources */,
 				349F79712AAC416C003062D8 /* ToolbarView.swift in Sources */,
 				34195DA32AAC2BFB00EA2FFA /* BackgroundView.swift in Sources */,
 				342347042AA9630400A287E2 /* ContentView.swift in Sources */,
+				34DA58F62AB233ED00834982 /* BackgroundSettingsView.swift in Sources */,
 				34205B402AAD36B00083E6C2 /* SettingsView.swift in Sources */,
 				3423472C2AA967DF00A287E2 /* HostScanning.swift in Sources */,
 				342347022AA9630400A287E2 /* DequeueApp.swift in Sources */,
 				34DBD2572AAA761F00C7D641 /* CustomColors.swift in Sources */,
 				342347312AAA408A00A287E2 /* QRCodeScannerView.swift in Sources */,
 				34205B432AAD61990083E6C2 /* SubmenuToolbarView.swift in Sources */,
+				34DA58F32AB0D92500834982 /* Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -484,8 +512,8 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -517,8 +545,8 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -659,6 +687,22 @@
 				minimumVersion = 2.0.0;
 			};
 		};
+		34C1000B2AAE991F003F048E /* XCRemoteSwiftPackageReference "SymbolPicker" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/xnth97/SymbolPicker.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.5.0;
+			};
+		};
+		34C1000E2AAEB0BF003F048E /* XCRemoteSwiftPackageReference "SystemImagePicker" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sbertix/SystemImagePicker.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -666,6 +710,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 342347322AAA461D00A287E2 /* XCRemoteSwiftPackageReference "CodeScanner" */;
 			productName = CodeScanner;
+		};
+		34C1000C2AAE991F003F048E /* SymbolPicker */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 34C1000B2AAE991F003F048E /* XCRemoteSwiftPackageReference "SymbolPicker" */;
+			productName = SymbolPicker;
+		};
+		34C1000F2AAEB0BF003F048E /* SystemImagePicker */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 34C1000E2AAEB0BF003F048E /* XCRemoteSwiftPackageReference "SystemImagePicker" */;
+			productName = SystemImagePicker;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

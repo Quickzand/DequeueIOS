@@ -13,9 +13,11 @@ class AppState: ObservableObject {
     @Published var showSettings : Bool = false
     @Published var showHome : Bool = false
     @Published var showCreateAction : Bool = false
+    @Published var isLandscape : Bool = false
+    @Published var showHomeScreenBackground : Bool = true
+    @Published var currentPage : Int = 0
 }
-@main
-struct DequeueApp: App {
+@main struct DequeueApp: App {
     @StateObject private var appState = AppState()
     
     var body: some Scene {

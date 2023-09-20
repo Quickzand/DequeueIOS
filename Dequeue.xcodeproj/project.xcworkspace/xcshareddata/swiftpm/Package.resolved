@@ -8,6 +8,24 @@
         "revision" : "bf5d7087015620b250ee6c865b3c9039fc159d1a",
         "version" : "2.3.3"
       }
+    },
+    {
+      "identity" : "symbolpicker",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/xnth97/SymbolPicker.git",
+      "state" : {
+        "revision" : "34f118e2a4712e3ceef05481b9f15ab1e890bc37",
+        "version" : "1.5.0"
+      }
+    },
+    {
+      "identity" : "systemimagepicker",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/sbertix/SystemImagePicker.git",
+      "state" : {
+        "revision" : "d03c81b326107a267e9644b31ee415cee072130c",
+        "version" : "0.1.0"
+      }
     }
   ],
   "version" : 2
