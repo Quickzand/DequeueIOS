@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ToolbarView: View {
     @EnvironmentObject var appState : AppState
+    @Binding var editMode : Bool
     
     var body: some View {
             HStack (spacing: 10) {
@@ -24,8 +25,8 @@ struct ToolbarView: View {
                 }
                 Spacer()
       
-                Button(action: {}) {
-                    Image(systemName: "pencil")
+                Button(action: {editMode.toggle()}) {
+                    Image(systemName: editMode ?  "minus.diamond" : "pencil")
                         .padding(.all, 15)
                         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 15))
                         .font(.system(size:30, weight: .bold))
@@ -45,9 +46,9 @@ struct ToolbarView: View {
             }
     }
 }
-
-struct ToolbarView_Previews: PreviewProvider {
-    static var previews: some View {
-        ToolbarView().environmentObject(AppState())
-    }
-}
+//
+//struct ToolbarView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ToolbarView(editMode: $editMode).environmentObject(AppState())
+//    }
+//}

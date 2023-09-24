@@ -23,6 +23,7 @@
 		3423472F2AAA144400A287E2 /* ConnectToHostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3423472E2AAA144400A287E2 /* ConnectToHostView.swift */; };
 		342347312AAA408A00A287E2 /* QRCodeScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342347302AAA408A00A287E2 /* QRCodeScannerView.swift */; };
 		342347342AAA461D00A287E2 /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; productRef = 342347332AAA461D00A287E2 /* CodeScanner */; };
+		346FA4E02AC0C7E400215CEE /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346FA4DF2AC0C7E400215CEE /* AppState.swift */; };
 		349F79712AAC416C003062D8 /* ToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349F79702AAC416C003062D8 /* ToolbarView.swift */; };
 		34C1000D2AAE991F003F048E /* SymbolPicker in Frameworks */ = {isa = PBXBuildFile; productRef = 34C1000C2AAE991F003F048E /* SymbolPicker */; };
 		34C100102AAEB0BF003F048E /* SystemImagePicker in Frameworks */ = {isa = PBXBuildFile; productRef = 34C1000F2AAEB0BF003F048E /* SystemImagePicker */; };
@@ -69,6 +70,7 @@
 		3423472B2AA967DF00A287E2 /* HostScanning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostScanning.swift; sourceTree = "<group>"; };
 		3423472E2AAA144400A287E2 /* ConnectToHostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectToHostView.swift; sourceTree = "<group>"; };
 		342347302AAA408A00A287E2 /* QRCodeScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeScannerView.swift; sourceTree = "<group>"; };
+		346FA4DF2AC0C7E400215CEE /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		349F79702AAC416C003062D8 /* ToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarView.swift; sourceTree = "<group>"; };
 		34DA58F02AAF898000834982 /* HostController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostController.swift; sourceTree = "<group>"; };
 		34DA58F22AB0D92500834982 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
@@ -132,6 +134,7 @@
 				3423472D2AA967F500A287E2 /* Views */,
 				342347052AA9630500A287E2 /* Assets.xcassets */,
 				342347072AA9630500A287E2 /* Preview Content */,
+				346FA4DF2AC0C7E400215CEE /* AppState.swift */,
 				3423472B2AA967DF00A287E2 /* HostScanning.swift */,
 				34DA58F02AAF898000834982 /* HostController.swift */,
 				34DBD2562AAA761F00C7D641 /* CustomColors.swift */,
@@ -259,7 +262,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1430;
-				LastUpgradeCheck = 1430;
+				LastUpgradeCheck = 1500;
 				TargetAttributes = {
 					342346FD2AA9630400A287E2 = {
 						CreatedOnToolsVersion = 14.3.1;
@@ -341,6 +344,7 @@
 				34205B402AAD36B00083E6C2 /* SettingsView.swift in Sources */,
 				3423472C2AA967DF00A287E2 /* HostScanning.swift in Sources */,
 				342347022AA9630400A287E2 /* DequeueApp.swift in Sources */,
+				346FA4E02AC0C7E400215CEE /* AppState.swift in Sources */,
 				34DBD2572AAA761F00C7D641 /* CustomColors.swift in Sources */,
 				342347312AAA408A00A287E2 /* QRCodeScannerView.swift in Sources */,
 				34205B432AAD61990083E6C2 /* SubmenuToolbarView.swift in Sources */,
@@ -417,6 +421,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -477,6 +482,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;

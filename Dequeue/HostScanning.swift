@@ -120,7 +120,7 @@ func connectToHost(host: Host, appState: AppState, alreadySaved : Bool = false) 
             saveDevices(devices)
             print("++ Saved host data!")
         }
-        
+        isScanning = false
         DispatchQueue.main.async {
 
             appState.connectedHost = host
@@ -151,47 +151,27 @@ func getDevices() -> [Host]? {
 }
 
 
+// Get the host that was last connected to and then attempt to connect to it again
+func connectToLastRememberedHost(appState: AppState) {
+    // Retrieve the list of saved devices
+    guard let savedDevices = getDevices(), !savedDevices.isEmpty else {
+        print("No saved hosts found.")
+        return
+    }
+    
+    // Get the last remembered host (assuming it's the last one in the list)
+    let lastRememberedHost = savedDevices.last!
+    
+    // Attempt to connect to the last remembered host
+    connectToHost(host: lastRememberedHost, appState: appState, alreadySaved: true)
+}
+
+
+
 class NetworkScanner: ObservableObject {
     @Published var detectedHosts: [Host] = []
     
-    func startScan() {
-        self.detectedHosts = []
-//        isPortOpen(host: "192.168.0.2", port: portUsed, timeout: 1.5) {(isOpen: Bool, name: String, ip:String) in
-//            if(isOpen) {
-//                self.detectedHosts.append(Host(name: name, ip: ip,code: ""))
-//            }
-//        }
-//        
-//    } bb
-        
-        let port = portUsed  // Use the same port you defined earlier
-        let subnetsToScan = ["192.168.0.", "10.32.195.", "10.108.12."]  // Add more subnets as needed
-        
-        let dispatchGroup = DispatchGroup()
-        
-        isScanning = true  // Set the flag to true when scanning starts
-        
-        for subnet in subnetsToScan {
-            for i in 1...254 {
-                let ip = "\(subnet)\(i)"
-                dispatchGroup.enter()
-                
-                isPortOpen(host: ip, port: port, timeout: 4.5) { (isOpen: Bool, name: String, ip: String) in
-                    if isOpen && isScanning {  // Check the flag before attempting to connect
-                        DispatchQueue.main.async {
-                            self.detectedHosts.append(Host(name: name, ip: ip, code: ""))
-                        }
-                    }
-                    dispatchGroup.leave()
-                }
-            }
-        }
-        
-        dispatchGroup.notify(queue: .main) {
-            print("Scanning finished!")
-            // Do anything else you need after the scanning is completed
-        }
-    }
+    
 }
 
  

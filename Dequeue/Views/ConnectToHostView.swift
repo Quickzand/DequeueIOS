@@ -15,17 +15,14 @@ struct ConnectToHostView: View {
     
     @EnvironmentObject var appState: AppState
     
-    
-    @ObservedObject var scanner = NetworkScanner()
-    
     var body : some View {
         NavigationStack {
             VStack {
-                DetectedHostsListView(detectedHosts: $scanner.detectedHosts, scanner: scanner, appState: appState)
+                DetectedHostsListView(detectedHosts: $appState.detectedHosts, appState: appState)
                 Spacer()
                 Button(action: {
                     print("++ Starting scan for devices on local network...")
-                    scanner.startScan()
+                    appState.startScan()
                 })
                 {
                     Text("Refresh")
@@ -59,7 +56,7 @@ struct ConnectToHostView: View {
             .background(Color.clear)
             .onAppear() {
                 print("++ Starting scan for devices on local network...")
-                scanner.startScan()
+                appState.startScan()
             }
             
         }
@@ -187,7 +184,6 @@ struct CustomDigitInput: UIViewRepresentable {
 
 struct DetectedHostsListView: View {
     @Binding var detectedHosts: [Host]
-    @ObservedObject var scanner: NetworkScanner
     @ObservedObject var appState : AppState
     
     
@@ -200,7 +196,7 @@ struct DetectedHostsListView: View {
             .padding(.horizontal)
             .refreshable {
                 print("++ Starting scan for devices on local network...")
-                scanner.startScan()
+                appState.startScan()
             }
         }
     
@@ -228,7 +224,6 @@ struct DetectedHostView: View {
         )
         .foregroundColor(Color.white)
         .onAppear(perform: {
-            print("HERE")
         })
         
         

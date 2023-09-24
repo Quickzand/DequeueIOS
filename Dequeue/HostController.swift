@@ -77,38 +77,41 @@ struct Host : Hashable, Encodable, Decodable {
 
             // Create a URLSession task
             let task = URLSession.shared.dataTask(with: request) { [code = self.code] data, response, error in
-                if let error = error {
-                    print("Error sending request for code \(code): \(error.localizedDescription)")
-                    completion([])
-                    return
-                }
+                    // Dispatch the completion handler to the main thread
+                    DispatchQueue.main.async {
+                        if let error = error {
+                            print("Error sending request for code \(code): \(error.localizedDescription)")
+                            completion([])
+                            return
+                        }
 
-                if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
-                    print("HTTP Error: \(httpResponse.statusCode) for code \(code)")
-                    completion([])
-                    return
-                }
+                        if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
+                            print("HTTP Error: \(httpResponse.statusCode) for code \(code)")
+                            completion([])
+                            return
+                        }
 
-                // Attempt to decode the data into an array of Actions
-                if let data = data {
-                    do {
-                        let decoder = JSONDecoder()
-                        let receivedActions = try decoder.decode([ActionPage].self, from: data)
-                        print("Successfully retreived actions")
-                        completion(receivedActions)
-                        
-                    } catch {
-                        print("Error decoding Actions: \(error)")
-                        completion([])
+                        // Attempt to decode the data into an array of Actions
+                        if let data = data {
+                            do {
+                                let decoder = JSONDecoder()
+                                let receivedActions = try decoder.decode([ActionPage].self, from: data)
+                                print("Successfully retreived actions")
+                                completion(receivedActions)
+                                
+                            } catch {
+                                print("Error decoding Actions: \(error)")
+                                completion([])
+                            }
+                        } else {
+                            completion([])
+                        }
                     }
-                } else {
-                    completion([])
                 }
-            }
 
-            // Start the task
-            task.resume()
-        }
+                // Start the task
+                task.resume()
+            }
     
     
     mutating func createAction(action: inout Action, page : Int) {
@@ -149,6 +152,88 @@ struct Host : Hashable, Encodable, Decodable {
 
             task.resume()
         }
+    
+    
+    mutating func runAction(actionID: String) {
+        guard let url = URL(string: "http://\(self.ip):\(portUsed)/runAction") else {
+            print("Invalid URL for creating action")
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue(self.code, forHTTPHeaderField: "code")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        // Convert the actionID to a JSON object
+            let jsonBody = ["actionID": actionID]
+            do {
+                request.httpBody = try JSONSerialization.data(withJSONObject: jsonBody, options: [])
+            } catch {
+                print("Failed to serialize actionID to JSON: \(error)")
+                return
+            }
+        
+        
+        let task = URLSession.shared.dataTask(with: request) { [code = self.code] data, response, error in
+            if let error = error {
+                print("Error sending request for code \(code): \(error.localizedDescription)")
+                return
+            }
+
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
+                print("HTTP Error: \(httpResponse.statusCode) for code \(code)")
+                return
+            }
+
+            // Handle successful response if needed. For instance, update actions list or handle returned data.
+        }
+
+        task.resume()
+        
+        
+        
+    }
+    
+    
+    mutating func deleteAction(actionID: String) {
+        guard let url = URL(string: "http://\(self.ip):\(portUsed)/deleteAction") else {
+            print("Invalid URL for deleting action")
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue(self.code, forHTTPHeaderField: "code")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        // Convert the actionID to a JSON object
+            let jsonBody = ["actionID": actionID]
+            do {
+                request.httpBody = try JSONSerialization.data(withJSONObject: jsonBody, options: [])
+            } catch {
+                print("Failed to serialize actionID to JSON: \(error)")
+                return
+            }
+        
+        
+        let task = URLSession.shared.dataTask(with: request) { [code = self.code] data, response, error in
+            if let error = error {
+                print("Error sending request for code \(code): \(error.localizedDescription)")
+                return
+            }
+
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
+                print("HTTP Error: \(httpResponse.statusCode) for code \(code)")
+                return
+            }
+
+            // Handle successful response if needed. For instance, update actions list or handle returned data.
+        }
+
+        task.resume()
+        
+        
+        
+    }
 
 
 

@@ -39,6 +39,8 @@ struct ContentView: View {
             
         }
         .onAppear {
+            print("++ Attempting to connect to last remembered host...")
+            connectToLastRememberedHost(appState:appState)
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
                 withAnimation {
                     self.isActive = true

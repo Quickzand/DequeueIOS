@@ -10,10 +10,14 @@ import SwiftUI
 struct HomeView: View {
     @EnvironmentObject var appState: AppState
     @State var cachedActionPages : [ActionPage] = []
+    @State var testingActionPage : ActionPage = ActionPage()
+    
+    @State var editMode : Bool = false
+    
     var body: some View {
         if var host = appState.connectedHost {
             VStack {
-                ToolbarView()
+                ToolbarView(editMode: $editMode)
                     .navigationDestination(isPresented: $appState.showSettings) {
                         SettingsView()
                             .navigationTitle("Settings")
@@ -24,9 +28,9 @@ struct HomeView: View {
                     }
                     TabView {
                         ForEach(cachedActionPages.indices, id: \.self) { index in
-                            ActionPageView(pageData: $cachedActionPages[index])
+                            ActionPageView(pageData: $cachedActionPages[index], editMode: $editMode)
                         }
-                        Text("Page2")
+                        ActionPageView(pageData: $testingActionPage, editMode: $editMode)
                     }.tabViewStyle(.page(indexDisplayMode: .always))
                     .frame(maxHeight:.infinity)
                 }
@@ -48,6 +52,7 @@ struct HomeView: View {
 
 struct ActionPageView : View {
     @Binding var pageData : ActionPage
+    @Binding var editMode : Bool
     
 var RowCount : Int = 4
     var ColCount : Int = 3
@@ -58,7 +63,7 @@ var RowCount : Int = 4
                 ForEach((1...RowCount), id: \.self) {rowNum in
                     GridRow {
                         ForEach((1...ColCount), id: \.self) {colNum in
-                            ActionButtonView(action:pageData.actions[rowNum - 1][colNum - 1])
+                            ActionButtonView(action:pageData.actions[rowNum - 1][colNum - 1], editMode:$editMode)
                         }
                     }
                 }
@@ -72,44 +77,54 @@ var RowCount : Int = 4
 struct ActionButtonView : View {
     var action : Action?
     @EnvironmentObject var appState: AppState
+    @Binding var editMode : Bool
+    @State private var showAlert = false
     
     var body: some View {
-        if let action = action {
-            Button(action: {}) {
-                VStack {
-                    Image(systemName: action.icon)
-                        .font(.system(size:40))
-                        .frame(width:100, height:100)
-                        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 25.0))
-        
-                    Text(action.name)
-                        .font(.subheadline)
-                }
-                .foregroundColor(Color(hex:action.color))
-                
-            }
-            .rotationEffect(Angle(degrees: appState.isLandscape ? 90 : 0))
-        }
-        else {
-            Button(action: {}) {
-                VStack {
-                    Image(systemName: "bolt.fill")
-                        .font(.system(size:40))
-                        .frame(width:100, height:100)
-                        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 25.0))
-                        .padding(.all,10)
-                    Text("Nothing here")
-                        .font(.subheadline)
-                }
-                .foregroundColor(.white)
-                
-            }
-            .rotationEffect(Angle(degrees: appState.isLandscape ? 90 : 0))
 
-        }
+                Button(action: {
+                    if let actionID = action?.uid {
+                        appState.connectedHost?.runAction(actionID: actionID)
+                    }
+                }) {
+                    VStack {
+                        Image(systemName: action?.icon ?? "bolt.fill")
+                            .font(.system(size:40))
+                            .frame(width:100, height:100)
+                            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 25.0))
+                            .padding(.horizontal,10)
+                        Text(action?.name ?? "Nothing")
+                            .font(.subheadline)
+                    }
+                    .padding(.vertical,appState.isLandscape ? 5 : 10)
+                    .foregroundColor(Color(hex:action?.color ?? "#FFFFFF"))
+                    
+                }
+                .rotationEffect(Angle(degrees: appState.isLandscape ? 90 : 0))
+                .opacity(action != nil ? 1 : 0)
+                .overlay( ZStack {
+                    if(editMode) {
+                        Button(action: {
+                            showAlert = true
+                        }) {
+                            Image(systemName: "minus.circle.fill")
+                                .position(CGPoint(x: 20.0, y: 20.0))
+                                .font(.system(size: 25))
+                                .foregroundColor(.secondary)
+                        }
+                    }})
+                .alert(isPresented: $showAlert) {
+                                Alert(
+                                    title: Text("Are you sure you would like to delete this action?"),
+                                    primaryButton: .destructive(Text("Delete")) {
+                                        appState.connectedHost?.deleteAction(actionID: action?.uid ?? "")
+                                    },
+                                    secondaryButton: .cancel()
+                                )
+                            }
         
         
-    }
+            }
 }
 
 struct HomeView_Previews: PreviewProvider {
