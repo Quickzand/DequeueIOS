@@ -10,6 +10,7 @@ import SwiftUI
 struct SettingsView: View {
     @EnvironmentObject var appState: AppState
     @State var showConnectToHostView : Bool = false
+    @State var isFeedbackAlertPresented : Bool = false
     
     var body: some View {
         ScrollView([.vertical]) {
@@ -25,6 +26,13 @@ struct SettingsView: View {
                     
                 }
             })
+            SettingsItemView(title: "Share Feedback", iconName: "megaphone", action: {
+                if let url = URL(string: "mailto:matthewsand22@gmail.com") {
+                    UIApplication.shared.open(url)
+                }
+            })
+            
+//            SettingsAccentsListView()
             
             SettingsItemToggleView(title: "Background on Actions Screen", iconName: "", toggle: $appState.showHomeScreenBackground)
         }
@@ -91,6 +99,37 @@ struct SettingsItemToggleView : View  {
         .foregroundColor(.white)
     }
 }
+
+struct SettingsAccentsListView : View {
+    @State private var colors : [Color] = [Color.red, Color.blue, Color.green]
+    @State private var isSelected : Bool = false
+    var body : some View {
+        VStack {
+            Text("Accent Colors")
+            ScrollView([.horizontal]) {
+                HStack {
+                    ForEach(colors, id: \.self) {color in
+                        VStack {
+                            VStack {
+                                
+                            }
+                            .frame(width:50, height:50)
+                            .background(color, in: RoundedRectangle(cornerRadius: 20))
+                            Text("Name")
+                        }
+                        .padding()
+                        
+                        
+                    }
+                }
+            }
+        }
+        .padding()
+        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 20))
+        .padding()
+    }
+}
+
 
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {

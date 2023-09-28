@@ -48,8 +48,9 @@ struct ContentView: View {
             }
         }
         .onReceive(orientationChanged) { _ in
-            self.orientation = UIDevice.current.orientation
-            appState.isLandscape = self.orientation.isLandscape
+            let orientation = UIDevice.current.orientation
+            appState.deviceOrientation = AppState.DeviceOrientation(deviceOrientation: orientation)
+            
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         

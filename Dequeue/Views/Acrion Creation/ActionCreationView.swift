@@ -20,8 +20,13 @@ struct ActionCreationView: View {
     @State private var selectedActionType : ActionType = .shortcut
     @State private var iconPickerPresented = false
     @State private var newAction = Action(icon: "bolt.fill", name: "New Action", type: "shortcut")
+    @State var editingAction : Action? 
     @EnvironmentObject var appState: AppState
     @State private var actionColor = Color(.white);
+    @State private var currentAction = Action()
+    
+    
+    @State var isEditing : Bool = false
     
     func colorToHex(_ color: Color) -> String {
         let uiColor = UIColor(color)
@@ -36,28 +41,33 @@ struct ActionCreationView: View {
     }
     
     var body: some View {
+
         VStack {
             ScrollView([.vertical]) {
                 HStack {
-                    ColorPicker("",selection: $actionColor, supportsOpacity: false)
-                        .onChange(of: actionColor) { newValue in
-                            newAction.color = colorToHex(newValue)
-                        }
-                        .labelsHidden()
                     Button(action: {
                         iconPickerPresented = true
                     }) {
                         Image(systemName: newAction.icon)
+                            .foregroundColor(Color(hex:newAction.color))
                     }
                     .padding()
                     .frame(width:65, height:65)
                     .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
                     .font(.title)
-                    
-                    TextField("Action name", text: $newAction.name)
-                        .padding()
+                    HStack {
+                        Button(action: {
+                            newAction.nameVisible.toggle()
+                        }) {
+                            Image(systemName: newAction.nameVisible ? "eye" : "eye.slash" )
+                        }
+                        .font(.system(.body, weight: .heavy))
+                        .opacity(0.5)
+                        TextField("Action name", text: $newAction.name)
+                            .font(.title)
+                    }.padding()
                         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
-                        .font(.title)
+                        
                 }
                 .foregroundColor(.white)
                 .padding()
@@ -87,18 +97,35 @@ struct ActionCreationView: View {
             //        .sheet(isPresented: $iconPickerPresented) {
             //            SymbolPicker(symbol: $icon)
             //        }
-            .systemImagePicker(
-                isPresented: $iconPickerPresented,
-                selection: $newAction.icon
+            .iconPicker(
+                isPresented: $iconPickerPresented, selectedIconName: $newAction.icon, selectedColor: $newAction.color
             )
+            .onAppear() {
+                if let editingAction = editingAction {
+                    self.newAction = editingAction
+                    print("WORKS")
+                }
+            }
             .background(BackgroundView())
             Button(action: {
-                appState.connectedHost?.createAction(action: &newAction, page: appState.currentPage)
-                appState.showCreateAction = false
+                print("HERE")
+                if self.isEditing {
+                    print("HERE2")
+                    appState.connectedHost?.updateAction(action: newAction)
+                }
+                else {
+                    appState.connectedHost?.createAction(action: &newAction, page: appState.currentPage)
+                }
+                
+                appState.connectedHost?.fetchActions(completion: {actionPages in
+                    appState.connectedHost?.actionPages = []
+                    appState.connectedHost?.actionPages = actionPages
+                    appState.showCreateAction = false
+                })
             }) {
                 HStack {
                     Spacer()
-                    Text("Create Action")
+                    Text(self.isEditing ? "Update Action" : "Create Action")
                     Spacer()
                 }.font(.system(size:27,weight:.bold))
                     .frame(height: 25)
@@ -107,6 +134,9 @@ struct ActionCreationView: View {
                     .foregroundColor(Color.white)
                 
                 
+            }
+            .onDisappear() {
+                appState.showEditAction = false
             }
         }
     }
@@ -228,7 +258,7 @@ struct ModifierButton : View {
                     .frame(width:100, height:100)
                     .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
             }
-            Text("Command")
+            Text(modifierName)
         }
         .foregroundColor(isSelected() ?  Color("AccentColor") : .white)
     }

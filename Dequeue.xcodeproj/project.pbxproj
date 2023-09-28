@@ -23,7 +23,9 @@
 		3423472F2AAA144400A287E2 /* ConnectToHostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3423472E2AAA144400A287E2 /* ConnectToHostView.swift */; };
 		342347312AAA408A00A287E2 /* QRCodeScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342347302AAA408A00A287E2 /* QRCodeScannerView.swift */; };
 		342347342AAA461D00A287E2 /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; productRef = 342347332AAA461D00A287E2 /* CodeScanner */; };
+		346EC9FB2AC3E44F00CEACD8 /* ActionButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346EC9FA2AC3E44F00CEACD8 /* ActionButtonView.swift */; };
 		346FA4E02AC0C7E400215CEE /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346FA4DF2AC0C7E400215CEE /* AppState.swift */; };
+		346FA4E22AC0DF0B00215CEE /* CustomIconPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346FA4E12AC0DF0B00215CEE /* CustomIconPickerView.swift */; };
 		349F79712AAC416C003062D8 /* ToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349F79702AAC416C003062D8 /* ToolbarView.swift */; };
 		34C1000D2AAE991F003F048E /* SymbolPicker in Frameworks */ = {isa = PBXBuildFile; productRef = 34C1000C2AAE991F003F048E /* SymbolPicker */; };
 		34C100102AAEB0BF003F048E /* SystemImagePicker in Frameworks */ = {isa = PBXBuildFile; productRef = 34C1000F2AAEB0BF003F048E /* SystemImagePicker */; };
@@ -70,7 +72,9 @@
 		3423472B2AA967DF00A287E2 /* HostScanning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostScanning.swift; sourceTree = "<group>"; };
 		3423472E2AAA144400A287E2 /* ConnectToHostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectToHostView.swift; sourceTree = "<group>"; };
 		342347302AAA408A00A287E2 /* QRCodeScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeScannerView.swift; sourceTree = "<group>"; };
+		346EC9FA2AC3E44F00CEACD8 /* ActionButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionButtonView.swift; sourceTree = "<group>"; };
 		346FA4DF2AC0C7E400215CEE /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		346FA4E12AC0DF0B00215CEE /* CustomIconPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomIconPickerView.swift; sourceTree = "<group>"; };
 		349F79702AAC416C003062D8 /* ToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarView.swift; sourceTree = "<group>"; };
 		34DA58F02AAF898000834982 /* HostController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostController.swift; sourceTree = "<group>"; };
 		34DA58F22AB0D92500834982 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
@@ -172,16 +176,34 @@
 			children = (
 				34DA58F42AB233B600834982 /* Settings */,
 				34205B422AAD61990083E6C2 /* SubmenuToolbarView.swift */,
-				34205B442AADAC5C0083E6C2 /* ActionCreationView.swift */,
+				3441FFF12AC24127007D4697 /* Acrion Creation */,
 				342347012AA9630400A287E2 /* DequeueApp.swift */,
-				342347032AA9630400A287E2 /* ContentView.swift */,
-				3423472E2AAA144400A287E2 /* ConnectToHostView.swift */,
-				342347302AAA408A00A287E2 /* QRCodeScannerView.swift */,
+				3441FFF22AC24150007D4697 /* Connection */,
 				34195DA02AAC25A000EA2FFA /* HomeView.swift */,
 				34195DA22AAC2BFB00EA2FFA /* BackgroundView.swift */,
 				349F79702AAC416C003062D8 /* ToolbarView.swift */,
+				346EC9FA2AC3E44F00CEACD8 /* ActionButtonView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		3441FFF12AC24127007D4697 /* Acrion Creation */ = {
+			isa = PBXGroup;
+			children = (
+				346FA4E12AC0DF0B00215CEE /* CustomIconPickerView.swift */,
+				34205B442AADAC5C0083E6C2 /* ActionCreationView.swift */,
+			);
+			path = "Acrion Creation";
+			sourceTree = "<group>";
+		};
+		3441FFF22AC24150007D4697 /* Connection */ = {
+			isa = PBXGroup;
+			children = (
+				342347302AAA408A00A287E2 /* QRCodeScannerView.swift */,
+				342347032AA9630400A287E2 /* ContentView.swift */,
+				3423472E2AAA144400A287E2 /* ConnectToHostView.swift */,
+			);
+			path = Connection;
 			sourceTree = "<group>";
 		};
 		34DA58F42AB233B600834982 /* Settings */ = {
@@ -336,8 +358,10 @@
 				3423472F2AAA144400A287E2 /* ConnectToHostView.swift in Sources */,
 				34205B452AADAC5C0083E6C2 /* ActionCreationView.swift in Sources */,
 				34DA58F12AAF898000834982 /* HostController.swift in Sources */,
+				346FA4E22AC0DF0B00215CEE /* CustomIconPickerView.swift in Sources */,
 				34195DA12AAC25A000EA2FFA /* HomeView.swift in Sources */,
 				349F79712AAC416C003062D8 /* ToolbarView.swift in Sources */,
+				346EC9FB2AC3E44F00CEACD8 /* ActionButtonView.swift in Sources */,
 				34195DA32AAC2BFB00EA2FFA /* BackgroundView.swift in Sources */,
 				342347042AA9630400A287E2 /* ContentView.swift in Sources */,
 				34DA58F62AB233ED00834982 /* BackgroundSettingsView.swift in Sources */,
@@ -436,7 +460,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -491,7 +515,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;

@@ -35,3 +35,27 @@ extension Color {
         )
     }
 }
+
+
+public extension View {
+    func iconPicker(
+        isPresented: Binding<Bool>,
+        selectedIconName: Binding<String>,
+        selectedColor: Binding<String>
+    ) -> some View {
+        sheet(isPresented: isPresented) {
+            CustomIconPickerView(selectedIconName: selectedIconName, selectedColor: selectedColor, isPresented: isPresented)
+        }
+    }
+    
+    
+}
+
+extension Array {
+    func chunked(into size: Int) -> [[Element]] {
+        stride(from: 0, to: count, by: size).map {
+            Array(self[$0..<Swift.min($0 + size, count)])
+        }
+    }
+}
+

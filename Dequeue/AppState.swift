@@ -6,21 +6,60 @@
 //
 
 import Foundation
+import UIKit
+import SwiftUI
 
 
 class AppState: ObservableObject {
+    enum DeviceOrientation {
+        case vertical
+        case right
+        case left
+        
+        init(deviceOrientation: UIDeviceOrientation) {
+                switch deviceOrientation {
+                case .portrait, .portraitUpsideDown:
+                    self = .vertical
+                case .landscapeRight:
+                    self = .right
+                case .landscapeLeft:
+                    self = .left
+                default:
+                    self = .vertical // Default to vertical if unknown orientation
+                }
+            }
+    }
+    
+    
+    func isLandscape() -> Bool {
+        return (self.deviceOrientation != .vertical)
+    }
+    
+    func getCorrectedRotationAngle() -> Angle {
+        switch deviceOrientation {
+        case .vertical:
+            return Angle(degrees: 0)
+        case .right:
+            return Angle(degrees: -90)
+        case .left:
+            return Angle(degrees: 90)
+        }
+    }
+    
     @Published var connectedHost : Host? = nil
     @Published var showSettings : Bool = false
     @Published var showHome : Bool = false
     @Published var showCreateAction : Bool = false
-    @Published var isLandscape : Bool = false
+    @Published var deviceOrientation : DeviceOrientation = .vertical
     @Published var showHomeScreenBackground : Bool = true
     @Published var currentPage : Int = 0
     @Published var detectedHosts: [Host] = []
+    @Published var showEditAction : Bool = false
+    @Published var currentlyEditingAction : Action = Action()
     
     func startScan() {
         
-        if let connectedHost = connectedHost {
+        if connectedHost != nil {
             return
         }
         
