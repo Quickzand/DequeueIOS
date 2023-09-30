@@ -38,12 +38,11 @@ struct ActionPage : Hashable, Encodable, Decodable, Equatable  {
 
 
 struct Host : Hashable, Encodable, Decodable {
-    var name: String
-    var ip: String
-    var code: String
+    var name: String = ""
+    var ip: String = ""
+    var code: String = ""
     
     var actionPages : [ActionPage] = []
-    
     
     func sanitizedName() -> String {
         var tempName = name
@@ -58,199 +57,232 @@ struct Host : Hashable, Encodable, Decodable {
         
         return tempName
     }
-
-        mutating func fetchActions(completion: @escaping ([ActionPage]) -> Void) {
-            print("++ FETCHING ACTIONS")
-            // Construct the full URL
-            guard let url = URL(string: "http://\(self.ip):\(portUsed)/getActions") else {
-                print("Invalid URL for getting actions")
-                completion([])
-                return
-            }
-
-            // Create a URLRequest object
-            var request = URLRequest(url: url)
-            request.httpMethod = "GET"
-
-            // Set the code in the header
-            request.setValue(self.code, forHTTPHeaderField: "code")
-
-            // Create a URLSession task
-            let task = URLSession.shared.dataTask(with: request) { [code = self.code] data, response, error in
-                    // Dispatch the completion handler to the main thread
-                    DispatchQueue.main.async {
-                        print("HERE1")
-                        if let error = error {
-                            print("Error sending request for code \(code): \(error.localizedDescription)")
-                            completion([])
-                            return
-                        }
-                        print("HERE2")
-
-                        if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
-                            print("HTTP Error: \(httpResponse.statusCode) for code \(code)")
-                            completion([])
-                            return
-                        }
-                        print("HERE3")
-
-                        // Attempt to decode the data into an array of Actions
-                        if let data = data {
-                            do {
-                                let decoder = JSONDecoder()
-                                let receivedActions = try decoder.decode([ActionPage].self, from: data)
-                                print("Successfully retreived actions")
-                                completion(receivedActions)
-                                
-                            } catch {
-                                print("Error decoding Actions: \(error)")
-                                completion([])
-                            }
-                        } else {
-                            completion([])
-                        }
-                        print("HERE4")
-                    }
-                }
-
-                // Start the task
-                task.resume()
-            }
     
+   
+
+}
+
+
+class HostViewModel: ObservableObject {
+    @Published var host: Host
     
-    mutating func createAction(action: inout Action, page : Int) {
-            guard let url = URL(string: "http://\(self.ip):\(portUsed)/createAction") else {
-                print("Invalid URL for creating action")
-                return
-            }
+    init(host: Host) {
+        self.host = host
+    }
+    
+    var isHostConnected = false 
+    
+    func fetchActions(completion: (([ActionPage]) -> Void)? = nil) {
+        print("++ FETCHING ACTIONS")
+        guard let url = URL(string: "http://\(self.host.ip):\(portUsed)/getActions") else {
+            print("Invalid URL for getting actions")
+            completion?([])
+            return
+        }
 
-            var request = URLRequest(url: url)
-            request.httpMethod = "POST"
-            request.setValue(self.code, forHTTPHeaderField: "code")
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            // Convert the action to JSON data
-            do {
-                let encoder = JSONEncoder()
-                action.page = page
-                let jsonData = try encoder.encode(action)
-                print("THE ENCODED NEW JSON IS \(jsonData)")
-                request.httpBody = jsonData
-            } catch {
-                print("Failed to encode action: \(error)")
-                return
-            }
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue(self.host.code, forHTTPHeaderField: "code")
 
-            let task = URLSession.shared.dataTask(with: request) { [code = self.code] data, response, error in
+        let task = URLSession.shared.dataTask(with: request) { [weak self, code = self.host.code] data, response, error in
+            DispatchQueue.main.async {
                 if let error = error {
                     print("Error sending request for code \(code): \(error.localizedDescription)")
+                    completion?([])
                     return
                 }
 
                 if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
                     print("HTTP Error: \(httpResponse.statusCode) for code \(code)")
+                    completion?([])
                     return
                 }
 
-                // Handle successful response if needed. For instance, update actions list or handle returned data.
+                if let data = data {
+                    do {
+                        let decoder = JSONDecoder()
+                        let receivedActions = try decoder.decode([ActionPage].self, from: data)
+                        print("Successfully retrieved actions")
+                        self?.host.actionPages = receivedActions  // Update the host's actions
+                        completion?(receivedActions)
+                    } catch {
+                        print("Error decoding Actions: \(error)")
+                        completion?([])
+                    }
+                } else {
+                    completion?([])
+                }
             }
-
-            task.resume()
         }
+
+        task.resume()
+    }
+
     
-    mutating func runAction(actionID: String, completion: ((Result<Void, Error>) -> Void)? = nil) {
-        guard let url = URL(string: "http://\(self.ip):\(portUsed)/runAction") else {
+    func createAction(action: inout Action, page: Int, completion: ((Result<Void, Error>) -> Void)? = nil) {
+        guard let url = URL(string: "http://\(self.host.ip):\(portUsed)/createAction") else {
             print("Invalid URL for creating action")
-            completion?(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
             return
         }
-
+        
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.setValue(self.code, forHTTPHeaderField: "code")
+        request.setValue(self.host.code, forHTTPHeaderField: "code")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        // Convert the actionID to a JSON object
-        let jsonBody = ["actionID": actionID]
+        action.page = page
+        
         do {
-            request.httpBody = try JSONSerialization.data(withJSONObject: jsonBody, options: [])
+            let encoder = JSONEncoder()
+            let jsonData = try encoder.encode(action)
+            request.httpBody = jsonData
         } catch {
-            print("Failed to serialize actionID to JSON: \(error)")
+            print("Failed to encode action: \(error)")
             completion?(.failure(error))
             return
         }
-
-        let task = URLSession.shared.dataTask(with: request) { [code = self.code] data, response, error in
+        
+        let task = URLSession.shared.dataTask(with: request) { [code = self.host.code] data, response, error in
             if let error = error {
                 print("Error sending request for code \(code): \(error.localizedDescription)")
                 completion?(.failure(error))
                 return
             }
-
+            
             if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
                 print("HTTP Error: \(httpResponse.statusCode) for code \(code)")
-                let httpError = NSError(domain: "", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: "HTTP Error: \(httpResponse.statusCode)"])
-                completion?(.failure(httpError))
+                completion?(.failure(NSError(domain: "", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: "HTTP Error: \(httpResponse.statusCode)"])))
+                return
+            }
+            
+            completion?(.success(()))
+        }
+        
+        task.resume()
+    }
+    
+    func deleteAction(actionID: String, completion: ((Result<Void, Error>) -> Void)? = nil) {
+        guard let url = URL(string: "http://\(self.host.ip):\(portUsed)/deleteAction") else {
+            completion?(.failure(NSError(domain: "URLConstruction", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL for deleting action"])))
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue(self.host.code, forHTTPHeaderField: "code")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        // Convert the actionID to a JSON object
+        let jsonBody = ["actionID": actionID]
+        do {
+            request.httpBody = try JSONSerialization.data(withJSONObject: jsonBody, options: [])
+        } catch {
+            completion?(.failure(error))
+            return
+        }
+
+        let task = URLSession.shared.dataTask(with: request) { [code = self.host.code] data, response, error in
+            if let error = error {
+                completion?(.failure(error))
                 return
             }
 
-            // Handle successful response if needed. For instance, update actions list or handle returned data.
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
+                completion?(.failure(NSError(domain: "", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: "HTTP Error: \(httpResponse.statusCode) for code \(code)"])))
+                return
+            }
+
             completion?(.success(()))
         }
 
         task.resume()
     }
 
+
     
-    mutating func deleteAction(actionID: String) {
-        guard let url = URL(string: "http://\(self.ip):\(portUsed)/deleteAction") else {
-            print("Invalid URL for deleting action")
+    func updateAction(action: Action, completion: ((Result<Void, Error>) -> Void)? = nil) {
+        guard let url = URL(string: "http://\(self.host.ip):\(portUsed)/updateAction/\(action.uid)") else {
             return
         }
-
+        
         var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue(self.code, forHTTPHeaderField: "code")
+        request.httpMethod = "PUT"
+        request.setValue(self.host.code, forHTTPHeaderField: "code")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        // Convert the actionID to a JSON object
-        let jsonBody = ["actionID": actionID]
+        
         do {
-            request.httpBody = try JSONSerialization.data(withJSONObject: jsonBody, options: [])
+            let encoder = JSONEncoder()
+            let jsonData = try encoder.encode(action)
+            request.httpBody = jsonData
         } catch {
-            print("Failed to serialize actionID to JSON: \(error)")
+            completion?(.failure(error))
             return
         }
-
-        let task = URLSession.shared.dataTask(with: request) { [code = self.code] data, response, error in
+        
+        let task = URLSession.shared.dataTask(with: request) { [code = self.host.code] data, response, error in
             if let error = error {
-                print("Error sending request for code \(code): \(error.localizedDescription)")
+                completion?(.failure(error))
                 return
             }
-
-            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
-                print("HTTP Error: \(httpResponse.statusCode) for code \(code)")
-                return
-            }
-
             
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
+                completion?(.failure(NSError(domain: "", code: httpResponse.statusCode, userInfo: nil)))
+                return
+            }
+            
+            completion?(.success(()))
         }
-
+        
         task.resume()
     }
-
     
     
-    mutating func swapActions(source: (page: Int, row: Int, col: Int), target: (page: Int, row: Int, col: Int), completion: ((Result<Void, Error>) -> Void)? = nil) {
-        guard let url = URL(string: "http://\(self.ip):\(portUsed)/swapAction") else {
-            print("Invalid URL for swapping actions")
+    func runAction(actionID: String, completion: ((Result<Void, Error>) -> Void)? = nil) {
+        guard let url = URL(string: "http://\(self.host.ip):\(portUsed)/runAction") else {
             completion?(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
             return
         }
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.setValue(self.code, forHTTPHeaderField: "code")
+        request.setValue(self.host.code, forHTTPHeaderField: "code")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let jsonBody = ["actionID": actionID]
+        do {
+            request.httpBody = try JSONSerialization.data(withJSONObject: jsonBody, options: [])
+        } catch {
+            completion?(.failure(error))
+            return
+        }
+
+        let task = URLSession.shared.dataTask(with: request) { [code = self.host.code] data, response, error in
+            if let error = error {
+                completion?(.failure(error))
+                return
+            }
+
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
+                completion?(.failure(NSError(domain: "", code: httpResponse.statusCode, userInfo: nil)))
+                return
+            }
+
+            completion?(.success(()))
+        }
+
+        task.resume()
+    }
+
+    func swapActions(source: (page: Int, row: Int, col: Int), target: (page: Int, row: Int, col: Int), completion: ((Result<Void, Error>) -> Void)? = nil) {
+        guard let url = URL(string: "http://\(self.host.ip):\(portUsed)/swapAction") else {
+            completion?(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue(self.host.code, forHTTPHeaderField: "code")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
-        // Convert the source and target data to JSON object
         let jsonBody: [String: Any] = [
             "sourcePage": source.page,
             "sourceRow": source.row,
@@ -263,71 +295,21 @@ struct Host : Hashable, Encodable, Decodable {
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: jsonBody, options: [])
         } catch {
-            print("Failed to serialize swap data to JSON: \(error)")
             completion?(.failure(error))
             return
         }
 
-        let task = URLSession.shared.dataTask(with: request) { [code = self.code] data, response, error in
+        let task = URLSession.shared.dataTask(with: request) { [code = self.host.code] data, response, error in
             if let error = error {
-                print("Error sending request for code \(code): \(error.localizedDescription)")
                 completion?(.failure(error))
                 return
             }
 
             if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
-                print("HTTP Error: \(httpResponse.statusCode) for code \(code)")
-                let httpError = NSError(domain: "", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: "HTTP Error: \(httpResponse.statusCode)"])
-                completion?(.failure(httpError))
+                completion?(.failure(NSError(domain: "", code: httpResponse.statusCode, userInfo: nil)))
                 return
             }
 
-            // Handle successful response if needed.
-            completion?(.success(()))
-        }
-
-        task.resume()
-    }
-    
-    
-    mutating func updateAction(action: Action, completion: ((Result<Void, Error>) -> Void)? = nil) {
-        print("UPDATING ACTION")
-        guard let url = URL(string: "http://\(self.ip):\(portUsed)/updateAction") else {
-            print("Invalid URL for updating action")
-            completion?(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
-            return
-        }
-
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue(self.code, forHTTPHeaderField: "code")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        // Convert the action to JSON data
-        do {
-            let encoder = JSONEncoder()
-            let jsonData = try encoder.encode(action)
-            request.httpBody = jsonData
-        } catch {
-            print("Failed to encode action for update: \(error)")
-            completion?(.failure(error))
-            return
-        }
-
-        let task = URLSession.shared.dataTask(with: request) { [code = self.code] data, response, error in
-            if let error = error {
-                print("Error sending request for code \(code): \(error.localizedDescription)")
-                completion?(.failure(error))
-                return
-            }
-
-            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
-                print("HTTP Error: \(httpResponse.statusCode) for code \(code)")
-                let httpError = NSError(domain: "", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: "HTTP Error: \(httpResponse.statusCode)"])
-                completion?(.failure(httpError))
-                return
-            }
-
-            // Handle successful response if needed. For instance, update actions list or handle returned data.
             completion?(.success(()))
         }
 

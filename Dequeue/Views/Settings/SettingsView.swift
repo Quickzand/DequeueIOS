@@ -21,10 +21,7 @@ struct SettingsView: View {
                     ConnectToHostView()
                 }
             SettingsItemView(title: "Refresh Actions", iconName: "arrow.clockwise", action: {
-                appState.connectedHost?.fetchActions(){ actions in
-                    appState.connectedHost?.actionPages = actions
-                    
-                }
+                appState.connectedHost.fetchActions()
             })
             SettingsItemView(title: "Share Feedback", iconName: "megaphone", action: {
                 if let url = URL(string: "mailto:matthewsand22@gmail.com") {
@@ -35,7 +32,7 @@ struct SettingsView: View {
 //            SettingsAccentsListView()
             
             SettingsItemToggleView(title: "Background on Actions Screen", iconName: "", toggle: $appState.showHomeScreenBackground)
-        }
+        } 
     }
 }
 

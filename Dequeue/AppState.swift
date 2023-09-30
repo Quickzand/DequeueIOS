@@ -46,7 +46,7 @@ class AppState: ObservableObject {
         }
     }
     
-    @Published var connectedHost : Host? = nil
+    @Published var connectedHost : HostViewModel = HostViewModel(host: Host())
     @Published var showSettings : Bool = false
     @Published var showHome : Bool = false
     @Published var showCreateAction : Bool = false
@@ -59,7 +59,7 @@ class AppState: ObservableObject {
     
     func startScan() {
         
-        if connectedHost != nil {
+        if connectedHost.isHostConnected {
             return
         }
         

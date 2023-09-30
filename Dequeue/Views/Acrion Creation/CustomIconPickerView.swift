@@ -45,7 +45,7 @@ struct CustomIconPickerView: View {
 
     
     
-    @State private var currentSection : String = "Color"
+    @State private var currentSection : String = "Icon"
     let pickerSelections = ["Icon", "Color"]
     
     
@@ -56,7 +56,14 @@ struct CustomIconPickerView: View {
     
     var body: some View {
             VStack() {
-                
+                HStack {
+                    Spacer()
+                    Button("Done") {
+                        isPresented = false
+                    }
+                    .padding(.horizontal)
+                    .padding(.top)
+                }
                 VStack {
                     Spacer()
                     Image(systemName:selectedIconName)
@@ -89,7 +96,7 @@ struct CustomIconPickerView: View {
                             LazyVGrid(columns: [
                                 GridItem(.adaptive(minimum: 80))
                             ], spacing: 20) {
-                                ForEach(filteredSymbols, id:\.self) {iconName in
+                                ForEach(filteredSymbols.sorted(), id:\.self) {iconName in
                                     IconButton(iconName: iconName, selectedIconName: $selectedIconName, color: $color, isPresented: $isPresented)
                                     
                                 }

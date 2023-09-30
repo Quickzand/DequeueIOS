@@ -123,7 +123,8 @@ func connectToHost(host: Host, appState: AppState, alreadySaved : Bool = false) 
         isScanning = false
         DispatchQueue.main.async {
 
-            appState.connectedHost = host
+            appState.connectedHost = HostViewModel(host: host)
+            appState.connectedHost.isHostConnected = true
             appState.showHome = true
         }
     }

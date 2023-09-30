@@ -36,7 +36,6 @@ struct ActionButtonView : View {
     @EnvironmentObject var appState: AppState
     @Binding var editMode : Bool
     @State private var showAlert = false
-    @Binding var pageData : ActionPage
     @State private var startTrim: CGFloat = 0.0
     @State private var endTrim: CGFloat = 0.0
     var col : Int
@@ -55,6 +54,7 @@ struct ActionButtonView : View {
     let completionAnimationDuration = 1.2
     
     @State private var isDragedOver : Bool = false
+    @Binding var needsUpdate : Bool
 
     let timer = Timer.publish(every: 0.02
                               , on: .main, in: .common).autoconnect()
@@ -71,7 +71,7 @@ struct ActionButtonView : View {
                         }
                         else {
                             isLoading = true
-                            appState.connectedHost?.runAction(actionID: actionID) {result in
+                            appState.connectedHost.runAction(actionID: actionID) {result in
                                 let generator = UINotificationFeedbackGenerator()
                                 generator.notificationOccurred(.success)
                                 actionCompleted = true
@@ -174,13 +174,9 @@ struct ActionButtonView : View {
                                 Alert(
                                     title: Text("Are you sure you would like to delete this action?"),
                                     primaryButton: .destructive(Text("Delete")) {
-                                        appState.connectedHost?.deleteAction(actionID: action?.uid ?? "")
-                                            for (rowIndex, row) in pageData.actions.enumerated() {
-                                                if let colIndex = row.firstIndex(where: { $0?.uid == action?.uid }) {
-                                                    pageData.actions[rowIndex][colIndex] = nil
-                                                    break
-                                                }
-                                            }
+                                        appState.connectedHost.deleteAction(actionID: action?.uid ?? "") {_ in 
+                                            needsUpdate = true
+                                        }
                                     },
                                     secondaryButton: .cancel()
                                 )
@@ -255,7 +251,7 @@ struct ActionButtonPreviewa_Previews: PreviewProvider {
             let envObject = AppState()
             var testActionPage = ActionPage()
             testActionPage.actions[0][0] = Action()
-            envObject.connectedHost =  Host(name: "MatbbokPro", ip: "Test", code: "1122", actionPages: [])
+            envObject.connectedHost =  HostViewModel(host:Host(name: "MatbbokPro", ip: "Test", code: "1122", actionPages: []))
             return envObject
         }())
     }

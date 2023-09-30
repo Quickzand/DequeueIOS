@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		34195DA12AAC25A000EA2FFA /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34195DA02AAC25A000EA2FFA /* HomeView.swift */; };
 		34195DA32AAC2BFB00EA2FFA /* BackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34195DA22AAC2BFB00EA2FFA /* BackgroundView.swift */; };
+		341CDB5A2AC7619F0013FBB5 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341CDB592AC7619F0013FBB5 /* File.swift */; };
 		34205B402AAD36B00083E6C2 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34205B3F2AAD36B00083E6C2 /* SettingsView.swift */; };
 		34205B432AAD61990083E6C2 /* SubmenuToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34205B422AAD61990083E6C2 /* SubmenuToolbarView.swift */; };
 		34205B452AADAC5C0083E6C2 /* ActionCreationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34205B442AADAC5C0083E6C2 /* ActionCreationView.swift */; };
@@ -55,6 +56,7 @@
 /* Begin PBXFileReference section */
 		34195DA02AAC25A000EA2FFA /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		34195DA22AAC2BFB00EA2FFA /* BackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundView.swift; sourceTree = "<group>"; };
+		341CDB592AC7619F0013FBB5 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		34205B3F2AAD36B00083E6C2 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		34205B412AAD57680083E6C2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		34205B422AAD61990083E6C2 /* SubmenuToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmenuToolbarView.swift; sourceTree = "<group>"; };
@@ -113,6 +115,7 @@
 		342346F52AA9630400A287E2 = {
 			isa = PBXGroup;
 			children = (
+				341CDB592AC7619F0013FBB5 /* File.swift */,
 				342347002AA9630400A287E2 /* Dequeue */,
 				342347112AA9630500A287E2 /* DequeueTests */,
 				3423471B2AA9630500A287E2 /* DequeueUITests */,
@@ -372,6 +375,7 @@
 				34DBD2572AAA761F00C7D641 /* CustomColors.swift in Sources */,
 				342347312AAA408A00A287E2 /* QRCodeScannerView.swift in Sources */,
 				34205B432AAD61990083E6C2 /* SubmenuToolbarView.swift in Sources */,
+				341CDB5A2AC7619F0013FBB5 /* File.swift in Sources */,
 				34DA58F32AB0D92500834982 /* Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

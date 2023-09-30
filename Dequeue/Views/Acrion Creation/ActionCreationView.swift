@@ -11,7 +11,7 @@ import SystemImagePicker
 
 enum ActionType {
     case shortcut
-    case action
+    case siriShortcut
     case none
 }
 
@@ -76,7 +76,7 @@ struct ActionCreationView: View {
                     Spacer()
                     ActionTypeView(associatedAction: .shortcut, selectedActionType: $selectedActionType)
                     Spacer()
-                    ActionTypeView(associatedAction: .action, selectedActionType: $selectedActionType)
+                    ActionTypeView(associatedAction: .siriShortcut, selectedActionType: $selectedActionType)
                     Spacer()
                     ActionTypeView(associatedAction: .none, selectedActionType: $selectedActionType)
                     Spacer()
@@ -85,8 +85,8 @@ struct ActionCreationView: View {
                 switch selectedActionType {
                 case .shortcut:
                     keyboardShortcutCreationView(newAction: $newAction)
-                case .action:
-                    Text("Action").font(.headline).padding(.top)
+                case .siriShortcut:
+                    Text("Siri Shortcut").font(.headline).padding(.top)
                 case .none:
                     Text("None").font(.headline).padding(.top)
                 }
@@ -111,17 +111,15 @@ struct ActionCreationView: View {
                 print("HERE")
                 if self.isEditing {
                     print("HERE2")
-                    appState.connectedHost?.updateAction(action: newAction)
+                    appState.connectedHost.updateAction(action: newAction)
                 }
                 else {
-                    appState.connectedHost?.createAction(action: &newAction, page: appState.currentPage)
+                    appState.connectedHost.createAction(action: &newAction, page: appState.currentPage)
                 }
                 
-                appState.connectedHost?.fetchActions(completion: {actionPages in
-                    appState.connectedHost?.actionPages = []
-                    appState.connectedHost?.actionPages = actionPages
-                    appState.showCreateAction = false
-                })
+                appState.connectedHost.fetchActions()
+                appState.showCreateAction = false
+                appState.showEditAction = false
             }) {
                 HStack {
                     Spacer()
@@ -160,14 +158,14 @@ struct ActionTypeView : View {
                     Image(systemName: "keyboard.fill")
                         .font(.system(size: 50))
                     Spacer()
-                    Text("Keyboard Shortcut")
+                    Text("Key")
                         .font(.subheadline)
-                case .action:
+                case .siriShortcut:
                     Spacer()
-                    Image(systemName: "bolt.fill")
+                    Image(systemName: "sparkles.rectangle.stack")
                         .font(.system(size: 50))
                     Spacer()
-                    Text("Action")
+                    Text("Shortcut")
                         .font(.subheadline)
                 case .none:
                     Spacer()
