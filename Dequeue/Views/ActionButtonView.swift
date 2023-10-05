@@ -6,6 +6,14 @@
 //
 
 import SwiftUI
+#if canImport(MobileCoreServices)
+import MobileCoreServices
+#endif
+
+#if canImport(UniformTypeIdentifiers)
+import UniformTypeIdentifiers
+#endif
+
 
 
 
@@ -49,12 +57,21 @@ struct ActionButtonView : View {
     @State private var completionCount = 0
     @State private var errorCompletionCount = 0
     
+    @State private var isError = false
+    
+    @State private var isBeingTapped = false
+    
+    @State private var isDropTargeted = false
+    
+    @Binding var isDragAndDropOccuring : Bool
+    
     let imageSize = 100.0
     
     let completionAnimationDuration = 1.2
     
     @State private var isDragedOver : Bool = false
     @Binding var needsUpdate : Bool
+    
 
     let timer = Timer.publish(every: 0.02
                               , on: .main, in: .common).autoconnect()
@@ -72,23 +89,28 @@ struct ActionButtonView : View {
                         else {
                             isLoading = true
                             appState.connectedHost.runAction(actionID: actionID) {result in
-                                let generator = UINotificationFeedbackGenerator()
-                                generator.notificationOccurred(.success)
+                                
                                 actionCompleted = true
                                 completionCount += 1
+                                let generator = UINotificationFeedbackGenerator()
                                 switch result {
                                 case .success:
+                                    generator.notificationOccurred(.success)
                                     successfulCompletionCount += 1
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                                        isLoading = false
-                                        actionCompleted = false
-                                    }
+                                
                                     
                                 case .failure(let error):
-                                    // Handle the error
+                                    generator.notificationOccurred(.error)
+                                    isError = true
                                     errorCompletionCount += 1
                                     print("Error occurred: \(error.localizedDescription)")
                                 }
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                                    isLoading = false
+                                    actionCompleted = false
+                                    isError = false
+                                }
+                                
                             }
                         }
                     }
@@ -101,17 +123,25 @@ struct ActionButtonView : View {
                                 // Custom Loading Indicator
                                 RoundedRectangle(cornerRadius: 20)
 //                                    .trim(from: startTrim, to: endTrim)
-                                    .fill(Color("AccentColor")) // Adjust the lineWidth as needed
+                                .fill(isError ? Color.red : Color("AccentColor")) // Adjust the lineWidth as needed
                                     .frame(width: 90, height: 90) // Adjust the size as needed
                                     .clipShape(RoundedRectangle(cornerRadius: 20))
                                     .rotationEffect(.degrees(-90))
                                     .opacity(isLoading ? 1 : 0)
                                     .animation(.easeInOut(duration: 0.5))
+                            
+                            
+                            RoundedRectangle(cornerRadius:25.0, style:.continuous)
+                                .foregroundStyle(.ultraThinMaterial)
+                                .frame(width:imageSize, height:imageSize)
+                                .contentShape(.dragPreview, RoundedRectangle(cornerRadius: 25, style: .continuous))
+                            
                             Image(systemName: action?.icon ?? "bolt.fill")
                                 .font(.system(size:40))
                                 .frame(width:imageSize, height:imageSize)
-                                .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 25.0))
-                                .padding(.horizontal,10)
+                                
+                                
+                                
                                 .keyframeAnimator(initialValue: ActionCompletionBlurAnimationProperties(), trigger: completionCount)  {
                                     content, value in
                                     content
@@ -123,12 +153,16 @@ struct ActionButtonView : View {
                                         LinearKeyframe(0.0, duration: completionAnimationDuration * 0.4)
                                     }
                                 }
-                                .overlay(ActionButtonProgressView(size: imageSize, isShown: $isLoading))
+                                .overlay(ActionButtonProgressView(size: imageSize, isShown: $isLoading, isError: $isError))
                                 
                             
-                            ActionButtonCompletionIcon(completionAnimationDuration: completionAnimationDuration, successfulCompletionCount: $successfulCompletionCount)
+                                
+                            
+                            ActionSuccessButtonCompletionIcon(completionAnimationDuration: completionAnimationDuration, successfulCompletionCount: $successfulCompletionCount)
+                            ActionErrorButtonCompletionIcon(completionAnimationDuration: completionAnimationDuration, errorCompletionCount: $errorCompletionCount)
 
                         }
+                        .padding(.horizontal,10)
                         if let action = action {
                             Text(action.name)
                                 .font(.subheadline)
@@ -141,10 +175,14 @@ struct ActionButtonView : View {
                     }
                     .padding(.vertical,appState.isLandscape() ? 5 : 10)
                     .foregroundColor(Color(hex:action?.color ?? "#FFFFFF"))
-                    
                 }
+                .scaleEffect(isBeingTapped ? 0.1 : 1)
                 .rotationEffect(appState.getCorrectedRotationAngle())
-                .opacity(action != nil ? 1 : 0)
+                .opacity((action != nil) ? 1 : 0)
+                .contentShape(.dragPreview, RoundedRectangle(cornerRadius: 25, style: .continuous))
+                
+                
+                
                 .overlay( ZStack {
                     if(editMode) {
                         VStack {
@@ -165,7 +203,27 @@ struct ActionButtonView : View {
                             Spacer()
                         }
                         
-                    }})
+                    }
+                    if(editMode && self.action == nil)
+                    {
+                        RoundedRectangle(cornerRadius:25).fill(.thinMaterial)
+                    }
+                    if(isDropTargeted) {
+                        RoundedRectangle(cornerRadius:25).fill(.ultraThinMaterial)
+                    }
+                })
+                .dropDestination(for: String.self) { actionID, location in
+                    print(actionID[0], " to: ", self.row, self.col)
+                    appState.connectedHost.swapActions(source: actionID[0], target: (page: self.pageNum, row: self.row-1, col: self.col-1)) {_ in 
+                        needsUpdate = true
+                    }
+                    return true
+                } isTargeted: {
+                    isDropTargeted = $0
+                }
+        
+                
+        
                 
       
                 
@@ -191,11 +249,12 @@ struct ActionButtonProgressView : View {
     @State var rotation = 0.0
     var size : Double
     @Binding var isShown: Bool
+    @Binding var isError : Bool
     var lineWidth: CGFloat {
             isShown ? 2 : 0
         }
     var body : some View {
-        RoundedRectangle(cornerRadius:25, style:.continuous).fill(Color("AccentColor"))
+        RoundedRectangle(cornerRadius:25, style:.continuous).fill(isError ? Color.red : Color("AccentColor"))
             .scaleEffect(x:3, y:0.9)
             .rotationEffect(.degrees(rotation))
             .animation(.easeInOut(duration: 1).repeatForever(autoreverses: false))
@@ -210,7 +269,7 @@ struct ActionButtonProgressView : View {
     }
 }
 
-struct ActionButtonCompletionIcon : View {
+struct ActionSuccessButtonCompletionIcon : View {
     var completionAnimationDuration : Double
     @Binding var successfulCompletionCount : Int
     
@@ -241,6 +300,47 @@ struct ActionButtonCompletionIcon : View {
                                             }
     }
 }
+
+
+
+
+struct ActionErrorButtonCompletionIcon : View {
+    var completionAnimationDuration : Double
+    @Binding var errorCompletionCount : Int
+    
+    var body : some View {
+        //                            Success!
+                                        Image(systemName: "xmark")
+                                            .font(.system(size: 40, weight: .bold))
+                                            .foregroundColor(Color.white)
+                                            .keyframeAnimator(initialValue: ActionCompletionSuccessAnimationProperties(),
+                                                trigger: errorCompletionCount) {
+                                                content, value in
+                                                content
+                                                    .offset(y: value.yTranslatiion)
+                                                    .opacity(value.opacity)
+                                            } keyframes: {frames in
+                                                KeyframeTrack(\.yTranslatiion) {
+                                                    SpringKeyframe(-10.0, duration: completionAnimationDuration * 0.2)
+                                                    LinearKeyframe(0.0, duration: completionAnimationDuration * 0.6)
+                                                    SpringKeyframe(-40.0, duration: completionAnimationDuration * 0.2)
+                                                }
+                                                
+                                                KeyframeTrack(\.opacity) {
+                                                    SpringKeyframe(1.0, duration: completionAnimationDuration * 0.2)
+                                                    LinearKeyframe(1.0, duration: completionAnimationDuration * 0.6)
+                                                    SpringKeyframe(0, duration: completionAnimationDuration * 0.2)
+                                                    SpringKeyframe(-1, duration: completionAnimationDuration * 0.1)
+                                                }
+                                            }
+    }
+}
+
+
+
+
+
+
 
 
 struct ActionButtonPreviewa_Previews: PreviewProvider {

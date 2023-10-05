@@ -24,6 +24,7 @@ struct Action : Hashable, Encodable, Decodable, Equatable {
     var uid: String = UUID().uuidString
     var page : Int?
     var nameVisible: Bool = true
+    var siriShortcut : String = ""
 }
 
 
@@ -200,7 +201,7 @@ class HostViewModel: ObservableObject {
 
     
     func updateAction(action: Action, completion: ((Result<Void, Error>) -> Void)? = nil) {
-        guard let url = URL(string: "http://\(self.host.ip):\(portUsed)/updateAction/\(action.uid)") else {
+        guard let url = URL(string: "http://\(self.host.ip):\(portUsed)/updateAction") else {
             return
         }
         
@@ -272,7 +273,7 @@ class HostViewModel: ObservableObject {
         task.resume()
     }
 
-    func swapActions(source: (page: Int, row: Int, col: Int), target: (page: Int, row: Int, col: Int), completion: ((Result<Void, Error>) -> Void)? = nil) {
+    func swapActions(source : String, target: (page: Int, row: Int, col: Int), completion: ((Result<Void, Error>) -> Void)? = nil) {
         guard let url = URL(string: "http://\(self.host.ip):\(portUsed)/swapAction") else {
             completion?(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
             return
@@ -284,9 +285,7 @@ class HostViewModel: ObservableObject {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
         let jsonBody: [String: Any] = [
-            "sourcePage": source.page,
-            "sourceRow": source.row,
-            "sourceCol": source.col,
+            "source": source,
             "targetPage": target.page,
             "targetRow": target.row,
             "targetCol": target.col
@@ -313,6 +312,46 @@ class HostViewModel: ObservableObject {
             completion?(.success(()))
         }
 
+        task.resume()
+    }
+    
+    
+    
+    func getSiriShortcuts(completion: ((Result<Void, Error>, [String]) -> Void)? = nil) {
+        print("++ FETCHING SIRI SHORTCUTS")
+        guard let url = URL(string: "http://\(self.host.ip):\(portUsed)/getSiriShortcuts") else {
+            completion?(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])), [])
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue(self.host.code, forHTTPHeaderField: "code")
+
+        let task = URLSession.shared.dataTask(with: request) { [code = self.host.code] data, response, error in
+            if let error = error {
+                completion?(.failure(error), [])
+                return
+            }
+            
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
+                completion?(.failure(NSError(domain: "", code: httpResponse.statusCode, userInfo: nil)), [])
+                return
+            }
+            
+            
+            if let data = data {
+                    do {
+                        let decoder = JSONDecoder()
+                        let receivedShortcuts = try decoder.decode([String].self, from: data)
+                        print("Successfully retrieved siri shortcuts")
+                        completion?(.success(()),receivedShortcuts)
+                    } catch {
+                        print("Error decoding Actions: \(error)")
+                }
+                
+            }
+        }
         task.resume()
     }
 

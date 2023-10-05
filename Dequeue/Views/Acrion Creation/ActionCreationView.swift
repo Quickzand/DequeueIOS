@@ -25,6 +25,8 @@ struct ActionCreationView: View {
     @State private var actionColor = Color(.white);
     @State private var currentAction = Action()
     
+    @State private var siriShortcuts : [String] = []
+    
     
     @State var isEditing : Bool = false
     
@@ -74,21 +76,23 @@ struct ActionCreationView: View {
                 Text("Action Type").font(.headline)
                 HStack(alignment:.center) {
                     Spacer()
-                    ActionTypeView(associatedAction: .shortcut, selectedActionType: $selectedActionType)
+                    ActionTypeView(associatedAction: "shortcut", selectedActionType: $newAction.type)
                     Spacer()
-                    ActionTypeView(associatedAction: .siriShortcut, selectedActionType: $selectedActionType)
+                    ActionTypeView(associatedAction: "siriShortcut", selectedActionType:$newAction.type)
                     Spacer()
-                    ActionTypeView(associatedAction: .none, selectedActionType: $selectedActionType)
+                    ActionTypeView(associatedAction: "none", selectedActionType: $newAction.type)
                     Spacer()
                 }
                 .frame(maxWidth: .infinity)
-                switch selectedActionType {
-                case .shortcut:
+                switch newAction.type {
+                case "shortcut":
                     keyboardShortcutCreationView(newAction: $newAction)
-                case .siriShortcut:
-                    Text("Siri Shortcut").font(.headline).padding(.top)
-                case .none:
+                case "siriShortcut":
+                    siriShortcutCreationView(newAction: $newAction, siriShortcuts: $siriShortcuts)
+                case "none":
                     Text("None").font(.headline).padding(.top)
+                default:
+                    EmptyView()
                 }
                 
                 
@@ -136,6 +140,10 @@ struct ActionCreationView: View {
             .onDisappear() {
                 appState.showEditAction = false
             }
+            .onAppear{appState.connectedHost.getSiriShortcuts {result, siriShortcuts in
+                self.siriShortcuts = siriShortcuts
+            }
+            }
         }
     }
 }
@@ -143,8 +151,8 @@ struct ActionCreationView: View {
 
 
 struct ActionTypeView : View {
-    var associatedAction : ActionType
-    @Binding var selectedActionType : ActionType
+    var associatedAction : String
+    @Binding var selectedActionType : String
     
     
     var body : some View {
@@ -153,27 +161,29 @@ struct ActionTypeView : View {
         }) {
             VStack {
                 switch associatedAction {
-                case .shortcut:
+                case "shortcut":
                     Spacer()
                     Image(systemName: "keyboard.fill")
                         .font(.system(size: 50))
                     Spacer()
                     Text("Key")
                         .font(.subheadline)
-                case .siriShortcut:
+                case "siriShortcut":
                     Spacer()
                     Image(systemName: "sparkles.rectangle.stack")
                         .font(.system(size: 50))
                     Spacer()
                     Text("Shortcut")
                         .font(.subheadline)
-                case .none:
+                case "none":
                     Spacer()
                     Image(systemName: "square.slash")
                         .font(.system(size: 50))
                     Spacer()
                     Text("None")
                         .font(.subheadline)
+                default:
+                    EmptyView()
                 }
 
             }
@@ -182,6 +192,36 @@ struct ActionTypeView : View {
             .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 25.0))
         }
         .foregroundColor((selectedActionType == associatedAction) ? Color("AccentColor") : Color.white)
+    }
+}
+
+
+
+struct siriShortcutCreationView : View {
+    
+    @Binding var newAction : Action
+    
+    @Binding var siriShortcuts : [String]
+    
+    
+    var body : some View {
+        VStack {
+            Text("Siri Shortcut").font(.title2).padding(.top)
+            VStack {
+                Picker("Select an Option", selection: $newAction.siriShortcut) {
+                     ForEach(siriShortcuts, id: \.self) { option in
+                         Text(option).onAppear{
+                             print(option)
+                         }
+                     }
+                 }
+                 .pickerStyle(MenuPickerStyle())
+                 .padding()
+            }
+            .onAppear {
+                print(siriShortcuts)
+            }
+        }.padding(.horizontal)
     }
 }
 

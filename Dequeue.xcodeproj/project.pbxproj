@@ -182,6 +182,7 @@
 				3441FFF12AC24127007D4697 /* Acrion Creation */,
 				342347012AA9630400A287E2 /* DequeueApp.swift */,
 				3441FFF22AC24150007D4697 /* Connection */,
+				342347032AA9630400A287E2 /* ContentView.swift */,
 				34195DA02AAC25A000EA2FFA /* HomeView.swift */,
 				34195DA22AAC2BFB00EA2FFA /* BackgroundView.swift */,
 				349F79702AAC416C003062D8 /* ToolbarView.swift */,
@@ -203,7 +204,6 @@
 			isa = PBXGroup;
 			children = (
 				342347302AAA408A00A287E2 /* QRCodeScannerView.swift */,
-				342347032AA9630400A287E2 /* ContentView.swift */,
 				3423472E2AAA144400A287E2 /* ConnectToHostView.swift */,
 			);
 			path = Connection;

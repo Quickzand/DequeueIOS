@@ -22,6 +22,7 @@ struct ConnectToHostView: View {
                 Spacer()
                 Button(action: {
                     print("++ Starting scan for devices on local network...")
+                    appState.connectedHost.isHostConnected = false
                     appState.startScan()
                 })
                 {
@@ -196,6 +197,7 @@ struct DetectedHostsListView: View {
             .padding(.horizontal)
             .refreshable {
                 print("++ Starting scan for devices on local network...")
+                appState.connectedHost.isHostConnected = false
                 appState.startScan()
             }
         }

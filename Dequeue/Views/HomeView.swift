@@ -39,14 +39,14 @@ struct HomeView: View {
                             }
                         }
                         else {
-                            Text("TEST").foregroundColor(.white).onAppear() {
+                            Text("").foregroundColor(.white).onAppear() {
                                 appState.connectedHost.fetchActions() {_ in
                                 needsUpdate = false
                             }
                                 
                             }
                         }
-                    }.tabViewStyle(.page(indexDisplayMode: .always))
+                    }.tabViewStyle(.page(indexDisplayMode: .automatic))
                     .frame(maxHeight:.infinity)
                 }
                 .background(appState.showHomeScreenBackground ? BackgroundView() : nil)
@@ -72,6 +72,7 @@ struct ActionPageView : View {
     @EnvironmentObject var appState : AppState
     @State var actions : [[Action?]]
     @Binding var needsUpdate : Bool
+    @State private var isDragAndDropOccuring = false
 
     var body : some View {
             VStack {
@@ -79,8 +80,15 @@ struct ActionPageView : View {
                     ForEach((1...RowCount), id: \.self) {rowNum in
                         GridRow {
                             ForEach((1...ColCount), id: \.self) {colNum in
-                                ActionButtonView(action:actions[rowNum - 1][colNum - 1], editMode:$editMode, col: colNum, row:rowNum
-                                                 , pageNum: pageNum, needsUpdate: $needsUpdate)
+                                if(editMode && actions[rowNum - 1][colNum - 1] != nil) {
+                                    ActionButtonView(action:actions[rowNum - 1][colNum - 1], editMode:$editMode, col: colNum, row:rowNum
+                                                     , pageNum: pageNum, isDragAndDropOccuring: $isDragAndDropOccuring, needsUpdate: $needsUpdate)
+                                    .draggable(actions[rowNum - 1][colNum - 1]!.uid)
+                                }
+                                else {
+                                    ActionButtonView(action:actions[rowNum - 1][colNum - 1], editMode:$editMode, col: colNum, row:rowNum
+                                                     , pageNum: pageNum, isDragAndDropOccuring: $isDragAndDropOccuring, needsUpdate: $needsUpdate)
+                                }
                             }
                         }
                     }
