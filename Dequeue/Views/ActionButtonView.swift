@@ -95,12 +95,18 @@ struct ActionButtonView : View {
                                 let generator = UINotificationFeedbackGenerator()
                                 switch result {
                                 case .success:
-                                    generator.notificationOccurred(.success)
+                                    if(appState.settings.hapticFeedbackEnabled)
+                                        {
+                                            generator.notificationOccurred(.success)
+                                        }
                                     successfulCompletionCount += 1
                                 
                                     
                                 case .failure(let error):
-                                    generator.notificationOccurred(.error)
+                                            if(appState.settings.hapticFeedbackEnabled)
+                                        {
+                                            generator.notificationOccurred(.error)
+                                        }
                                     isError = true
                                     errorCompletionCount += 1
                                     print("Error occurred: \(error.localizedDescription)")
@@ -178,6 +184,7 @@ struct ActionButtonView : View {
                 }
                 .scaleEffect(isBeingTapped ? 0.1 : 1)
                 .rotationEffect(appState.getCorrectedRotationAngle())
+                .animation(.easeInOut, value: appState.getCorrectedRotationAngle())
                 .opacity((action != nil) ? 1 : 0)
                 .contentShape(.dragPreview, RoundedRectangle(cornerRadius: 25, style: .continuous))
                 
@@ -204,13 +211,13 @@ struct ActionButtonView : View {
                         }
                         
                     }
-                    if(editMode && self.action == nil)
-                    {
                         RoundedRectangle(cornerRadius:25).fill(.thinMaterial)
-                    }
-                    if(isDropTargeted) {
+                            .opacity((editMode && self.action == nil) ? 1 : 0)
+                            .animation(.easeInOut)
                         RoundedRectangle(cornerRadius:25).fill(.ultraThinMaterial)
-                    }
+                        .opacity((isDropTargeted) ? 1 : 0)
+                            .animation(.easeInOut)
+
                 })
                 .dropDestination(for: String.self) { actionID, location in
                     print(actionID[0], " to: ", self.row, self.col)

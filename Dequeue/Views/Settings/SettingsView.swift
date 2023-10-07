@@ -31,8 +31,10 @@ struct SettingsView: View {
             
 //            SettingsAccentsListView()
             
-            SettingsItemToggleView(title: "Background on Actions Screen", iconName: "", toggle: $appState.showHomeScreenBackground)
-        } 
+            SettingsItemToggleView(title: "Background on Actions Screen", iconName: "", toggle: $appState.settings.showHomeScreenBackground)
+            
+            SettingsItemToggleView(title: "Haptic Feedback", iconName: "", toggle: $appState.settings.hapticFeedbackEnabled)
+        }
     }
 }
 

@@ -29,10 +29,9 @@ struct ContentView: View {
                         }
                 }
                 else {
-                        Image("DequeueLogo")
+                        Image("GizmoLogo")
                             .resizable()
                             .scaledToFit()
-                        
                 }
             }
             .background(BackgroundView().allowsHitTesting(false))
@@ -41,8 +40,8 @@ struct ContentView: View {
         .onAppear {
             print("++ Attempting to connect to last remembered host...")
             connectToLastRememberedHost(appState:appState)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
-                withAnimation {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                withAnimation(.easeInOut) {
                     self.isActive = true
                 }
             }

@@ -30,6 +30,8 @@ struct ActionCreationView: View {
     
     @State var isEditing : Bool = false
     
+    @FocusState var isTextFieldActive : Bool
+    
     func colorToHex(_ color: Color) -> String {
         let uiColor = UIColor(color)
         var red: CGFloat = 0
@@ -67,6 +69,17 @@ struct ActionCreationView: View {
                         .opacity(0.5)
                         TextField("Action name", text: $newAction.name)
                             .font(.title)
+                            .focused($isTextFieldActive)
+                            .toolbar {
+                                ToolbarItemGroup(placement: .keyboard) {
+                                    Spacer()
+
+                                    Button("Done") {
+                                        isTextFieldActive = false
+                                    }
+                                    .font(.system(size:16))
+                                }
+                            }
                     }.padding()
                         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
                         
@@ -215,8 +228,11 @@ struct siriShortcutCreationView : View {
                          }
                      }
                  }
-                 .pickerStyle(MenuPickerStyle())
-                 .padding()
+                .pickerStyle(MenuPickerStyle())
+                .padding()
+                .background(.ultraThinMaterial)
+                .clipShape(RoundedRectangle(cornerRadius: 25))
+                .padding(.horizontal)
             }
             .onAppear {
                 print(siriShortcuts)
@@ -229,6 +245,7 @@ struct siriShortcutCreationView : View {
 struct keyboardShortcutCreationView : View {
     
     @Binding var newAction : Action
+    @FocusState var isTextFieldActive : Bool
     
     var body : some View {
         VStack {
@@ -238,6 +255,17 @@ struct keyboardShortcutCreationView : View {
                     TextField(text: $newAction.key) {
                         
                     }
+                                    .focused($isTextFieldActive)
+                                    .toolbar {
+                                        ToolbarItemGroup(placement: .keyboard) {
+                                            Spacer()
+
+                                            Button("Done") {
+                                                isTextFieldActive = false
+                                            }
+                                            .font(.system(size:16))
+                                        }
+                                    }
                     .onChange(of: newAction.key) { newValue in
                         if newValue.count > 1 {
                             newAction.key = String(newValue.prefix(1))
@@ -302,8 +330,10 @@ struct ModifierButton : View {
     }
 }
 
-struct ActionCreationView_Previews: PreviewProvider {
-    static var previews: some View {
-        ActionCreationView()
-    }
-}
+//struct ActionCreationView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ActionCreationView()
+//    }
+//}
+
+//#Preview {ActionCreationView()}

@@ -51,11 +51,11 @@ class AppState: ObservableObject {
     @Published var showHome : Bool = false
     @Published var showCreateAction : Bool = false
     @Published var deviceOrientation : DeviceOrientation = .vertical
-    @Published var showHomeScreenBackground : Bool = true
     @Published var currentPage : Int = 0
     @Published var detectedHosts: [Host] = []
     @Published var showEditAction : Bool = false
     @Published var currentlyEditingAction : Action = Action()
+    @Published var settings : Settings = Settings()
     
     func startScan() {
         
@@ -93,4 +93,9 @@ class AppState: ObservableObject {
             // Do anything else you need after the scanning is completed
         }
     }
+}
+
+struct Settings {
+    var showHomeScreenBackground : Bool = true
+    var hapticFeedbackEnabled : Bool = true
 }

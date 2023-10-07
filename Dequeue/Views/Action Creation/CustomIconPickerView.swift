@@ -146,7 +146,7 @@ struct ColorPickerButtonView : View {
     @State private var selectedColorOfPicker : Color = Color("AccentColor")
     var body : some View {
         if(color == "CUSTOM") {
-            ColorPicker("", selection: $selectedColorOfPicker)
+            ColorPicker("", selection: $selectedColorOfPicker, supportsOpacity: false)
                 .labelsHidden()
                 .scaleEffect(2)
                 .frame(width:55, height: 55)

@@ -179,7 +179,7 @@
 			children = (
 				34DA58F42AB233B600834982 /* Settings */,
 				34205B422AAD61990083E6C2 /* SubmenuToolbarView.swift */,
-				3441FFF12AC24127007D4697 /* Acrion Creation */,
+				3441FFF12AC24127007D4697 /* Action Creation */,
 				342347012AA9630400A287E2 /* DequeueApp.swift */,
 				3441FFF22AC24150007D4697 /* Connection */,
 				342347032AA9630400A287E2 /* ContentView.swift */,
@@ -191,13 +191,13 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
-		3441FFF12AC24127007D4697 /* Acrion Creation */ = {
+		3441FFF12AC24127007D4697 /* Action Creation */ = {
 			isa = PBXGroup;
 			children = (
-				346FA4E12AC0DF0B00215CEE /* CustomIconPickerView.swift */,
 				34205B442AADAC5C0083E6C2 /* ActionCreationView.swift */,
+				346FA4E12AC0DF0B00215CEE /* CustomIconPickerView.swift */,
 			);
-			path = "Acrion Creation";
+			path = "Action Creation";
 			sourceTree = "<group>";
 		};
 		3441FFF22AC24150007D4697 /* Connection */ = {
@@ -541,6 +541,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Dequeue/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Gizmo;
 				INFOPLIST_KEY_NSCameraUsageDescription = "The camera is used to scan QR codes from your computer!";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = PLEASE;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -574,6 +575,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Dequeue/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Gizmo;
 				INFOPLIST_KEY_NSCameraUsageDescription = "The camera is used to scan QR codes from your computer!";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = PLEASE;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

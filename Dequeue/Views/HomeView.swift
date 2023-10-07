@@ -32,6 +32,10 @@ struct HomeView: View {
                                 .navigationTitle("Create Action")
                         }
                     }
+                    .navigationDestination(isPresented: $appState.showSettings) {
+                        SettingsView()
+                            .navigationTitle("Settings")
+                    }
                     TabView {
                         if !needsUpdate {
                             ForEach(appState.connectedHost.host.actionPages, id: \.self) { actionPage in
@@ -49,7 +53,7 @@ struct HomeView: View {
                     }.tabViewStyle(.page(indexDisplayMode: .automatic))
                     .frame(maxHeight:.infinity)
                 }
-                .background(appState.showHomeScreenBackground ? BackgroundView() : nil)
+            .background(appState.settings.showHomeScreenBackground ? BackgroundView() : nil)
                 .onAppear {
                     UIApplication.shared.isIdleTimerDisabled = true
                     

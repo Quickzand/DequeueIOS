@@ -26,10 +26,7 @@ struct ToolbarView: View {
                         .foregroundColor(.white)
                         .padding(.horizontal)
                 }
-                .navigationDestination(isPresented: $appState.showSettings) {
-                    SettingsView()
-                        .navigationTitle("Settings")
-                }
+                
                 Spacer()
       
                 Button(action: {editMode.toggle()}) {
