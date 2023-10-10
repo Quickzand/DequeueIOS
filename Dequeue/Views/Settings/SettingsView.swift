@@ -73,6 +73,7 @@ struct SettingsItemToggleView : View  {
     var title : String
     var iconName : String
     @Binding var toggle : Bool
+    @EnvironmentObject var appState : AppState
      
     
     
@@ -80,6 +81,7 @@ struct SettingsItemToggleView : View  {
     var body : some View {
         Button(action: {
             toggle.toggle()
+            appState.saveSettings()
         }) {
             HStack {
                 Image(systemName: iconName)

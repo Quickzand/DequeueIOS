@@ -7,6 +7,14 @@
 
 import SwiftUI
 
+
+
+struct ActionAppearAnimationProperties {
+    var scale = 0.0
+}
+
+
+
 struct HomeView: View {
     @EnvironmentObject var appState: AppState
     @State var cachedActionPages : [ActionPage] = []
@@ -77,6 +85,9 @@ struct ActionPageView : View {
     @State var actions : [[Action?]]
     @Binding var needsUpdate : Bool
     @State private var isDragAndDropOccuring = false
+    
+    @State private var buttonScale = 0.0
+    @State private var buttonOpacity = 0.0
 
     var body : some View {
             VStack {
@@ -84,15 +95,30 @@ struct ActionPageView : View {
                     ForEach((1...RowCount), id: \.self) {rowNum in
                         GridRow {
                             ForEach((1...ColCount), id: \.self) {colNum in
-                                if(editMode && actions[rowNum - 1][colNum - 1] != nil) {
-                                    ActionButtonView(action:actions[rowNum - 1][colNum - 1], editMode:$editMode, col: colNum, row:rowNum
-                                                     , pageNum: pageNum, isDragAndDropOccuring: $isDragAndDropOccuring, needsUpdate: $needsUpdate)
-                                    .draggable(actions[rowNum - 1][colNum - 1]!.uid)
+                                VStack {
+                                    if(editMode && actions[rowNum - 1][colNum - 1] != nil) {
+                                        ActionButtonView(action:actions[rowNum - 1][colNum - 1], editMode:$editMode, col: colNum, row:rowNum
+                                                         , pageNum: pageNum, isDragAndDropOccuring: $isDragAndDropOccuring, needsUpdate: $needsUpdate)
+                                        .draggable(actions[rowNum - 1][colNum - 1]!.uid)
+                                    }
+                                    else {
+                                        ActionButtonView(action:actions[rowNum - 1][colNum - 1], editMode:$editMode, col: colNum, row:rowNum
+                                                         , pageNum: pageNum, isDragAndDropOccuring: $isDragAndDropOccuring, needsUpdate: $needsUpdate)
+                                    }
                                 }
-                                else {
-                                    ActionButtonView(action:actions[rowNum - 1][colNum - 1], editMode:$editMode, col: colNum, row:rowNum
-                                                     , pageNum: pageNum, isDragAndDropOccuring: $isDragAndDropOccuring, needsUpdate: $needsUpdate)
+                                
+                                .animation(.bouncy(duration: 0.5, extraBounce: 0.3).delay(Double(calcDistance(col: colNum, row: rowNum, origin: (col:2,row:3))) * 0.15)) {content in
+                                    content
+                                        .opacity(buttonOpacity)
+                                        .scaleEffect(buttonScale)
+                                    
+                                    
                                 }
+                                .onAppear {
+                                    buttonScale = 1
+                                    buttonOpacity = 1
+                                }
+
                             }
                         }
                     }
@@ -100,6 +126,14 @@ struct ActionPageView : View {
                 Spacer()
             }
         }
+}
+
+
+func calcDistance(col: Int, row: Int, origin: (col: Int, row: Int)) -> Int {
+    let deltaX = col - origin.col
+    let deltaY = row - origin.row
+    let distance = sqrt(Double(deltaX * deltaX + deltaY * deltaY))
+    return Int(distance)
 }
 
 

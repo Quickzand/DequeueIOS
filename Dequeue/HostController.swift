@@ -9,6 +9,13 @@ import Foundation
 import SwiftUI
 
 
+
+
+struct Group : Hashable, Encodable, Decodable, Equatable {
+    var uid : String = UUID().uuidString
+    var name : String
+}
+
 struct Action : Hashable, Encodable, Decodable, Equatable {
     var icon : String = ""
     var name : String = ""
@@ -25,6 +32,7 @@ struct Action : Hashable, Encodable, Decodable, Equatable {
     var page : Int?
     var nameVisible: Bool = true
     var siriShortcut : String = ""
+    var text : String = ""
 }
 
 

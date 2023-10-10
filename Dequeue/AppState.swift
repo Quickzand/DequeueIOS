@@ -57,7 +57,24 @@ class AppState: ObservableObject {
     @Published var currentlyEditingAction : Action = Action()
     @Published var settings : Settings = Settings()
     
+    
+    func getSavedSettings() {
+        self.settings = (try? JSONDecoder().decode(Settings.self, from: UserDefaults.standard.data(forKey: "settings") ?? Data())) ?? Settings()
+    }
+    func saveSettings() {
+        let data = try? JSONEncoder().encode(self.settings)
+        UserDefaults.standard.set(data, forKey: "settings")
+    }
+    
+    init() {
+        getSavedSettings()
+    }
+    
+    
+    private var scanStopped = false
+    
     func startScan() {
+        scanStopped = false
         
         if connectedHost.isHostConnected {
             return
@@ -74,6 +91,10 @@ class AppState: ObservableObject {
         
         for subnet in subnetsToScan {
             for i in 1...254 {
+                if(scanStopped) {
+                    scanStopped = false
+                    return
+                }
                 let ip = "\(subnet)\(i)"
                 dispatchGroup.enter()
                 
@@ -93,9 +114,18 @@ class AppState: ObservableObject {
             // Do anything else you need after the scanning is completed
         }
     }
+    
+    func stopScan() {
+        self.scanStopped = true
+    }
+    
+    
 }
 
-struct Settings {
+struct Settings : Encodable, Decodable {
     var showHomeScreenBackground : Bool = true
     var hapticFeedbackEnabled : Bool = true
 }
+
+
+

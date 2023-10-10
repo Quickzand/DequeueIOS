@@ -59,6 +59,9 @@ struct ConnectToHostView: View {
                 print("++ Starting scan for devices on local network...")
                 appState.startScan()
             }
+            .onDisappear {
+                appState.stopScan()
+            }
             
         }
             

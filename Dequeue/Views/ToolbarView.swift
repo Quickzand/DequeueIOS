@@ -38,9 +38,10 @@ struct ToolbarView: View {
                         .foregroundColor(.white)
                 }
                 Spacer()
-                Button(action: {
+                
+                Button {
                     appState.showCreateAction = true
-                }) {
+                }label: {
                     Image(systemName: "plus")
                         .frame(width:buttonSize, height:buttonSize)
                         .padding(.all, 15)
@@ -49,6 +50,7 @@ struct ToolbarView: View {
                         .foregroundColor(.white)
                         .padding(.horizontal)
                 }
+                
             }
     }
 }
@@ -58,3 +60,4 @@ struct ToolbarView: View {
 //        ToolbarView(editMode: $editMode).environmentObject(AppState())
 //    }
 //}
+

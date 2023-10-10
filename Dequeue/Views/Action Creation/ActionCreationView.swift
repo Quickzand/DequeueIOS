@@ -87,23 +87,29 @@ struct ActionCreationView: View {
                 .foregroundColor(.white)
                 .padding()
                 Text("Action Type").font(.headline)
-                HStack(alignment:.center) {
-                    Spacer()
-                    ActionTypeView(associatedAction: "shortcut", selectedActionType: $newAction.type)
-                    Spacer()
-                    ActionTypeView(associatedAction: "siriShortcut", selectedActionType:$newAction.type)
-                    Spacer()
-                    ActionTypeView(associatedAction: "none", selectedActionType: $newAction.type)
-                    Spacer()
-                }
+//                ScrollView([.horizontal]) {
+                    HStack(alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/) {
+                        Spacer()
+                        ActionTypeView(associatedAction: "shortcut", selectedActionType: $newAction.type)
+                        Spacer()
+                        ActionTypeView(associatedAction: "siriShortcut", selectedActionType:$newAction.type)
+                        Spacer()
+                        ActionTypeView(associatedAction: "text", selectedActionType: $newAction.type)
+                        Spacer()
+//                        ActionTypeView(associatedAction: "group", selectedActionType: $newAction.type)
+//                        Spacer()
+                    }
+//                }
                 .frame(maxWidth: .infinity)
                 switch newAction.type {
                 case "shortcut":
                     keyboardShortcutCreationView(newAction: $newAction)
                 case "siriShortcut":
                     siriShortcutCreationView(newAction: $newAction, siriShortcuts: $siriShortcuts)
-                case "none":
-                    Text("None").font(.headline).padding(.top)
+                case "text":
+                    textCreationView(newAction: $newAction)
+                case "group":
+                    groupCreationView(newAction: $newAction)
                 default:
                     EmptyView()
                 }
@@ -188,12 +194,19 @@ struct ActionTypeView : View {
                     Spacer()
                     Text("Shortcut")
                         .font(.subheadline)
-                case "none":
+                case "text":
                     Spacer()
-                    Image(systemName: "square.slash")
+                    Image(systemName: "character.textbox")
                         .font(.system(size: 50))
                     Spacer()
-                    Text("None")
+                    Text("Text")
+                        .font(.subheadline)
+                case "group":
+                    Spacer()
+                    Image(systemName: "square.on.square")
+                        .font(.system(size: 50))
+                    Spacer()
+                    Text("Group")
                         .font(.subheadline)
                 default:
                     EmptyView()
@@ -210,6 +223,73 @@ struct ActionTypeView : View {
 
 
 
+
+
+struct groupCreationView : View {
+    
+    @Binding var newAction : Action
+    
+    
+    @State var currentlySelectedGroup = ""
+    
+    
+    @State var groups : [Group] = [Group(name:"TEST")]
+    
+    
+    var body : some View {
+        VStack {
+            Text("Open Group").font(.title2).padding(.top)
+            ScrollView([.vertical]) {
+                VStack {
+                    Button{} label: {
+                        HStack {
+                            Image(systemName: "plus")
+                            Text("New Group")
+                            Spacer()
+                        }
+                        .font(.subheadline)
+                        .foregroundColor(.white)
+                        .frame(maxWidth:.infinity)
+                        .padding()
+                        .background(.ultraThinMaterial)
+                        .clipShape(RoundedRectangle(cornerRadius:20.0))
+                    }
+                    
+                    ForEach(groups, id:\.self) {group in
+                        groupSelectionButtonView(group: group, currentlySelectedGroup: $currentlySelectedGroup)
+                    }
+                }
+            }
+            .onAppear {
+            }
+        }.padding(.horizontal)
+    }
+}
+
+struct groupSelectionButtonView : View {
+    
+    @State var group : Group
+    @Binding var currentlySelectedGroup : String
+    
+    var body : some View {
+        Button{currentlySelectedGroup = group.uid} label: {
+            HStack {
+                Text(group.name)
+                    .multilineTextAlignment(.leading)
+                    .font(.subheadline)
+                    .frame(maxWidth:.infinity)
+                    .padding()
+                    .foregroundColor((currentlySelectedGroup == group.uid) ? Color("AccentColor") : .white)
+                    .background( .ultraThinMaterial)
+                    .clipShape(RoundedRectangle(cornerRadius:20.0))
+            }
+        }
+    }
+    
+}
+
+
+
 struct siriShortcutCreationView : View {
     
     @Binding var newAction : Action
@@ -221,7 +301,7 @@ struct siriShortcutCreationView : View {
         VStack {
             Text("Siri Shortcut").font(.title2).padding(.top)
             VStack {
-                Picker("Select an Option", selection: $newAction.siriShortcut) {
+                Picker("Select a Shortcut", selection: $newAction.siriShortcut) {
                      ForEach(siriShortcuts, id: \.self) { option in
                          Text(option).onAppear{
                              print(option)
@@ -242,6 +322,40 @@ struct siriShortcutCreationView : View {
 }
 
 
+struct textCreationView : View {
+    
+    @Binding var newAction : Action
+    
+    @FocusState var isTextFieldActive : Bool
+    
+    
+    var body : some View {
+        VStack {
+            Text("Text Insertion").font(.title2).padding(.top)
+            TextEditor(text:$newAction.text)
+                .scrollContentBackground(.hidden)
+                .focused($isTextFieldActive)
+                .toolbar {
+                    ToolbarItemGroup(placement: .keyboard) {
+                        Spacer()
+
+                        Button("Done") {
+                            isTextFieldActive = false
+                        }
+                        .font(.system(size:16))
+                    }
+                }
+                .padding()
+                .background(.ultraThinMaterial, in:RoundedRectangle(cornerRadius: 25.0))
+                .frame(height: 400)
+            
+                
+            
+        }
+        .padding(.horizontal)
+    }
+}
+
 struct keyboardShortcutCreationView : View {
     
     @Binding var newAction : Action
@@ -253,7 +367,6 @@ struct keyboardShortcutCreationView : View {
             VStack {
                 Text("Key").font(.headline).padding(.top, 3)
                     TextField(text: $newAction.key) {
-                        
                     }
                                     .focused($isTextFieldActive)
                                     .toolbar {
