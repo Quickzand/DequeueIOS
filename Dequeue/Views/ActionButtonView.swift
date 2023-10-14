@@ -65,6 +65,8 @@ struct ActionButtonView : View {
     
     @Binding var isDragAndDropOccuring : Bool
     
+    
+    
     let imageSize = 100.0
     
     let completionAnimationDuration = 1.2
@@ -72,6 +74,7 @@ struct ActionButtonView : View {
     @State private var isDragedOver : Bool = false
     @Binding var needsUpdate : Bool
     
+    @State var isDisplayAction : Bool = false
 
     let timer = Timer.publish(every: 0.02
                               , on: .main, in: .common).autoconnect()
@@ -81,9 +84,12 @@ struct ActionButtonView : View {
 
                 Button(action: {
                     if let actionID = action?.uid {
+                        if (isDisplayAction == true) {
+                            return
+                        }
                         if editMode {
                             appState.showEditAction = true
-                            appState.currentlyEditingAction = action!
+                            appState.currentlyEditingAction = action ?? Action()
                             appState.showCreateAction = true
                         }
                         else {
@@ -159,7 +165,7 @@ struct ActionButtonView : View {
                                         LinearKeyframe(0.0, duration: completionAnimationDuration * 0.4)
                                     }
                                 }
-                                .overlay(ActionButtonProgressView(size: imageSize, isShown: $isLoading, isError: $isError))
+                                .overlay(ActionButtonProgressView(size: imageSize, isShown: $isLoading, isDisplayAction: $isDisplayAction, isError: $isError))
                                 
                             
                                 
@@ -256,6 +262,7 @@ struct ActionButtonProgressView : View {
     @State var rotation = 0.0
     var size : Double
     @Binding var isShown: Bool
+    @Binding var isDisplayAction : Bool
     @Binding var isError : Bool
     var lineWidth: CGFloat {
             isShown ? 2 : 0
@@ -266,7 +273,7 @@ struct ActionButtonProgressView : View {
             .rotationEffect(.degrees(rotation))
             .animation(.easeInOut(duration: 1).repeatForever(autoreverses: false))
             .mask(RoundedRectangle(cornerRadius: 25)
-                .stroke(lineWidth: isShown ? 2 : 0 )
+                .stroke(lineWidth: (isShown || isDisplayAction) ? 2 : 0 )
                 .animation(.easeInOut(duration: 0.3))
                 .frame(width:size, height:size))
             .onAppear{

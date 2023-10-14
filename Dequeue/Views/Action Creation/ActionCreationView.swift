@@ -69,17 +69,7 @@ struct ActionCreationView: View {
                         .opacity(0.5)
                         TextField("Action name", text: $newAction.name)
                             .font(.title)
-                            .focused($isTextFieldActive)
-                            .toolbar {
-                                ToolbarItemGroup(placement: .keyboard) {
-                                    Spacer()
-
-                                    Button("Done") {
-                                        isTextFieldActive = false
-                                    }
-                                    .font(.system(size:16))
-                                }
-                            }
+                            .submitLabel(.done)
                     }.padding()
                         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
                         
@@ -149,8 +139,7 @@ struct ActionCreationView: View {
                     Text(self.isEditing ? "Update Action" : "Create Action")
                     Spacer()
                 }.font(.system(size:27,weight:.bold))
-                    .frame(height: 25)
-                    .padding(.top)
+                    .padding(.vertical)
                     .background(Color("AccentColor").opacity(0.75))
                     .foregroundColor(Color.white)
                 
@@ -163,6 +152,15 @@ struct ActionCreationView: View {
                 self.siriShortcuts = siriShortcuts
             }
             }
+            .focused($isTextFieldActive)
+//            .toolbar {
+//                ToolbarItemGroup(placement:.keyboard) {
+//                    Spacer()
+//                    Button{
+//                        self.isTextFieldActive = false
+//                    } label: {Text("Done")}
+//                }
+//            }
         }
     }
 }
@@ -334,17 +332,7 @@ struct textCreationView : View {
             Text("Text Insertion").font(.title2).padding(.top)
             TextEditor(text:$newAction.text)
                 .scrollContentBackground(.hidden)
-                .focused($isTextFieldActive)
-                .toolbar {
-                    ToolbarItemGroup(placement: .keyboard) {
-                        Spacer()
-
-                        Button("Done") {
-                            isTextFieldActive = false
-                        }
-                        .font(.system(size:16))
-                    }
-                }
+                .submitLabel(.done)
                 .padding()
                 .background(.ultraThinMaterial, in:RoundedRectangle(cornerRadius: 25.0))
                 .frame(height: 400)
@@ -368,17 +356,6 @@ struct keyboardShortcutCreationView : View {
                 Text("Key").font(.headline).padding(.top, 3)
                     TextField(text: $newAction.key) {
                     }
-                                    .focused($isTextFieldActive)
-                                    .toolbar {
-                                        ToolbarItemGroup(placement: .keyboard) {
-                                            Spacer()
-
-                                            Button("Done") {
-                                                isTextFieldActive = false
-                                            }
-                                            .font(.system(size:16))
-                                        }
-                                    }
                     .onChange(of: newAction.key) { newValue in
                         if newValue.count > 1 {
                             newAction.key = String(newValue.prefix(1))
@@ -387,6 +364,7 @@ struct keyboardShortcutCreationView : View {
                     .font(.system(size: 30, weight: .bold))
                     .frame(width: 75, height: 75)
                     .multilineTextAlignment(.center)
+                    .submitLabel(.done)
                     .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 20))
             }
             

@@ -21,12 +21,17 @@ struct ContentView: View {
         NavigationStack {
             ZStack {
                 if isActive {
-                    ConnectToHostView()
-                        .environmentObject(appState)
-                        .navigationDestination(isPresented: $appState.showHome) {
-                            HomeView()
-                                .navigationBarHidden(true) 
-                        }
+                    if !appState.settings.onboardingComplete {
+                        OnboardingView()
+                    }
+                    else {
+                        ConnectToHostView()
+                            .environmentObject(appState)
+                            .navigationDestination(isPresented: $appState.showHome) {
+                                HomeView()
+                                    .navigationBarHidden(true)
+                            }
+                    }
                 }
                 else {
                         Image("GizmoLogo")

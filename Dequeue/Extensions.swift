@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import WebKit
 
 extension Color {
     init(hex: String) {
@@ -59,3 +60,17 @@ extension Array {
     }
 }
 
+
+struct WebView: UIViewRepresentable {
+    var url: URL
+
+    func makeUIView(context: Context) -> WKWebView {
+        let webView = WKWebView()
+        webView.scrollView.isScrollEnabled = false
+        return webView
+    }
+
+    func updateUIView(_ uiView: WKWebView, context: Context) {
+        uiView.loadFileURL(url, allowingReadAccessTo: url)
+    }
+}

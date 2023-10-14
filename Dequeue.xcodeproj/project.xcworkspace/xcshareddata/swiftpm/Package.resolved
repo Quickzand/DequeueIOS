@@ -10,6 +10,33 @@
       }
     },
     {
+      "identity" : "sdwebimage",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SDWebImage/SDWebImage.git",
+      "state" : {
+        "revision" : "1f06ef5007b6a580b3873ed2adee19e05d3b215a",
+        "version" : "5.18.3"
+      }
+    },
+    {
+      "identity" : "sdwebimageswiftui",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SDWebImage/SDWebImageSwiftUI.git",
+      "state" : {
+        "revision" : "e837c37d45449fbd3b4745c10c5b5274e73edead",
+        "version" : "2.2.3"
+      }
+    },
+    {
+      "identity" : "swiftui-gif",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/globulus/swiftui-gif.git",
+      "state" : {
+        "revision" : "89af6b7e04b0dc0bf97a721d27fc87c4db8e3829",
+        "version" : "1.0.1"
+      }
+    },
+    {
       "identity" : "symbolpicker",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/xnth97/SymbolPicker.git",

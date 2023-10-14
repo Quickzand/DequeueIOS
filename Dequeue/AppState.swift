@@ -125,6 +125,7 @@ class AppState: ObservableObject {
 struct Settings : Encodable, Decodable {
     var showHomeScreenBackground : Bool = true
     var hapticFeedbackEnabled : Bool = true
+    var onboardingComplete : Bool = false
 }
 
 

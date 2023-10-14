@@ -32,6 +32,11 @@ struct QRCodeScannerView: View {
                     }
                 }
             }
+        ).overlay(
+            Image(systemName: "viewfinder")
+                .resizable()
+                .scaledToFit()
+                .padding(.all, 100)
         )
     }
 }
