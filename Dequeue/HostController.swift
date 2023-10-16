@@ -26,7 +26,8 @@ struct Action : Hashable, Encodable, Decodable, Equatable {
         "Shift": false,
         "Control": false,
         "Option": false,
-        "Command": false
+        "Command": false,
+        "Windows": false
     ]
     var uid: String = UUID().uuidString
     var page : Int?
@@ -50,6 +51,7 @@ struct Host : Hashable, Encodable, Decodable {
     var name: String = ""
     var ip: String = ""
     var code: String = ""
+    var isMac : Bool = false
     
     var actionPages : [ActionPage] = []
     

@@ -106,12 +106,14 @@ func connectToHost(host: Host, appState: AppState, alreadySaved : Bool = false) 
             print("Received HTTP \(httpResponse.statusCode)")
             return
         }
-        
+        var isMac = false
         // Handle the response data if needed
         if let data = data, let content = String(data: data, encoding: .utf8) {
             // Do something with the data
             print("Received data: \(content)")
-
+            if(content == "true") {
+                isMac = true
+            }
         }
         
         if(!alreadySaved) {
@@ -122,8 +124,9 @@ func connectToHost(host: Host, appState: AppState, alreadySaved : Bool = false) 
         }
         isScanning = false
         DispatchQueue.main.async {
-
-            appState.connectedHost = HostViewModel(host: host)
+            var tempHost = host
+            tempHost.isMac = isMac
+            appState.connectedHost = HostViewModel(host: tempHost)
             appState.connectedHost.isHostConnected = true
             appState.showHome = true
         }

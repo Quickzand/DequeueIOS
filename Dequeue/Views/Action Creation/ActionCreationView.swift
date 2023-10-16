@@ -81,8 +81,10 @@ struct ActionCreationView: View {
                     HStack(alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/) {
                         Spacer()
                         ActionTypeView(associatedAction: "shortcut", selectedActionType: $newAction.type)
-                        Spacer()
-                        ActionTypeView(associatedAction: "siriShortcut", selectedActionType:$newAction.type)
+                        if(appState.connectedHost.host.isMac) {
+                            Spacer()
+                            ActionTypeView(associatedAction: "siriShortcut", selectedActionType:$newAction.type)
+                        }
                         Spacer()
                         ActionTypeView(associatedAction: "text", selectedActionType: $newAction.type)
                         Spacer()
@@ -378,14 +380,18 @@ struct keyboardShortcutCreationView : View {
 struct ModifierSelectionView : View  {
 
     @Binding var modifiers : [String: Bool]
-    
+    @EnvironmentObject var appState : AppState
     
     
     
     var body : some View {
         HStack {
             Spacer()
-            ModifierButton(icon: "command", modifierName: "Command", modifiers: $modifiers)
+            if(appState.connectedHost.host.isMac) {
+                ModifierButton(icon: "command", modifierName: "Command", modifiers: $modifiers)
+            } else {
+                ModifierButton(icon: "squareshape.split.2x2", modifierName: "Windows", modifiers: $modifiers)
+            }
             Spacer()
             ModifierButton(icon: "control", modifierName: "Control", modifiers: $modifiers)
             Spacer()
