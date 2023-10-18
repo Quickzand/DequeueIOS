@@ -8,6 +8,8 @@
 import SwiftUI
 import SDWebImageSwiftUI
 
+import UIKit
+
 
 struct OnboardingView: View {
     @State var hideContinue = true
@@ -175,9 +177,11 @@ struct ThirdOnboardingView : View {
                 .padding()
                 .multilineTextAlignment(.center)
             Button{
-                
+                if let url = URL(string: "www.matthewsand.info/Gizmo") {
+                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                }
             } label: {
-                Text("Go to the WebPage")
+                Text("Go to the Website")
                     .foregroundStyle(.white)
                     .font(.system(size:20, weight: .bold))
             }
