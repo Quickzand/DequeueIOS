@@ -26,18 +26,18 @@ struct HomeView: View {
     
     @State var needsUpdate = false
     
+    var layout = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
+    
     var body: some View {
         if appState.connectedHost.isHostConnected {
             VStack {
                 ToolbarView(editMode: $editMode)
                     .navigationDestination(isPresented: $appState.showCreateAction) {
-                        if appState.showEditAction {
-                            ActionCreationView(editingAction: appState.currentlyEditingAction,  isEditing: true)
-                                .navigationTitle("Edit Action")
+                        if editMode {
+                            ActionCreationView(editingAction: appState.currentlyEditingAction,  isEditing: true, needsUpdate: $needsUpdate)
                         }
                         else {
-                            ActionCreationView()
-                                .navigationTitle("Create Action")
+                            ActionCreationView(needsUpdate: $needsUpdate)
                         }
                     }
                     .navigationDestination(isPresented: $appState.showSettings) {
@@ -47,7 +47,7 @@ struct HomeView: View {
                     TabView {
                         if !needsUpdate {
                             ForEach(appState.connectedHost.host.actionPages, id: \.self) { actionPage in
-                                ActionPageView(editMode: $editMode, pageNum: 0, actions: actionPage.actions, needsUpdate: $needsUpdate)
+                                ActionPageView(editMode: $editMode, pageNum: 0, actionsLayout: actionPage.actions, needsUpdate: $needsUpdate)
                             }
                         }
                         else {
@@ -74,58 +74,40 @@ struct HomeView: View {
     }
 }
 
-
 struct ActionPageView : View {
     
-    @Binding var editMode : Bool
-    var RowCount : Int = 4
-    var ColCount : Int = 3
-    var pageNum : Int
-    @EnvironmentObject var appState : AppState
-    @State var actions : [[Action?]]
-    @Binding var needsUpdate : Bool
+    @Binding var editMode: Bool
+    var pageNum: Int
+    @EnvironmentObject var appState: AppState
+    @State var actionsLayout: [String?]
+    @Binding var needsUpdate: Bool
     @State private var isDragAndDropOccuring = false
     
-    @State private var buttonScale = 0.0
-    @State private var buttonOpacity = 0.0
-
-    var body : some View {
-            VStack {
-                Grid {
-                    ForEach((1...RowCount), id: \.self) {rowNum in
-                        GridRow {
-                            ForEach((1...ColCount), id: \.self) {colNum in
-                                VStack {
-                                    if(editMode && actions[rowNum - 1][colNum - 1] != nil) {
-                                        ActionButtonView(action:actions[rowNum - 1][colNum - 1], editMode:$editMode, col: colNum, row:rowNum
-                                                         , pageNum: pageNum, isDragAndDropOccuring: $isDragAndDropOccuring, needsUpdate: $needsUpdate)
-                                        .draggable(actions[rowNum - 1][colNum - 1]!.uid)
-                                    }
-                                    else {
-                                        ActionButtonView(action:actions[rowNum - 1][colNum - 1], editMode:$editMode, col: colNum, row:rowNum
-                                                         , pageNum: pageNum, isDragAndDropOccuring: $isDragAndDropOccuring, needsUpdate: $needsUpdate)
-                                    }
-                                }
-                                
-                                .animation(.bouncy(duration: 0.5, extraBounce: 0.3).delay(Double(calcDistance(col: colNum, row: rowNum, origin: (col:2,row:3))) * 0.15)) {content in
-                                    content
-                                        .opacity(buttonOpacity)
-                                        .scaleEffect(buttonScale)
-                                    
-                                    
-                                }
-                                .onAppear {
-                                    buttonScale = 1
-                                    buttonOpacity = 1
-                                }
-
-                            }
-                        }
+    @State private var buttonScale = 1.0
+    @State private var buttonOpacity = 1.0
+    var gridLayout = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
+    var body: some View {
+        VStack (alignment:.leading){
+            // Assuming Grid and GridRow are correctly implemented custom views
+            LazyVGrid(columns: gridLayout, spacing: 10) {
+                ForEach(0..<actionsLayout.count, id: \.self) {index in
+                    VStack {
+                        ActionSlot(action: appState.connectedHost.host.actions[actionsLayout[index] ?? "NOT AN ACTION"], editMode: $editMode, needsUpdate: $needsUpdate, index: index)
                     }
+                    //                            .animation(Animation.spring().delay(0.15 * Double(calcDistance(col: colNum, row: indexedAction.index, origin: (col:2, row:3))))) // Adjust the animation as needed
+                    .opacity(buttonOpacity)
+                    .scaleEffect(buttonScale)
+                    .onAppear {
+                        buttonScale = 1
+                        buttonOpacity = 1
+                    }
+                    
+                    
                 }
-                Spacer()
             }
+            
         }
+    }
 }
 
 

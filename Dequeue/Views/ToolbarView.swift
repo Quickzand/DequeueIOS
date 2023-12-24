@@ -29,7 +29,11 @@ struct ToolbarView: View {
                 
                 Spacer()
       
-                Button(action: {editMode.toggle()}) {
+                Button(action: {
+                    editMode.toggle()
+                    print("Edit mode:")
+                    print(editMode)
+                }) {
                     Image(systemName: editMode ?  "minus.diamond" : "pencil")
                         .frame(width:buttonSize, height:buttonSize)
                         .padding(.all, 15)
@@ -41,6 +45,7 @@ struct ToolbarView: View {
                 
                 Button {
                     appState.showCreateAction = true
+                    editMode = false
                 }label: {
                     Image(systemName: "plus")
                         .frame(width:buttonSize, height:buttonSize)

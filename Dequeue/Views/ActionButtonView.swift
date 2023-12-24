@@ -65,6 +65,8 @@ struct ActionButtonView : View {
     
     @Binding var isDragAndDropOccuring : Bool
     
+    var buttonType : String = ""
+    
     
     
     let imageSize = 100.0
@@ -148,6 +150,8 @@ struct ActionButtonView : View {
                                 .frame(width:imageSize, height:imageSize)
                                 .contentShape(.dragPreview, RoundedRectangle(cornerRadius: 25, style: .continuous))
                             
+                        
+                            
                             Image(systemName: action?.icon ?? "bolt.fill")
                                 .font(.system(size:40))
                                 .frame(width:imageSize, height:imageSize)
@@ -225,16 +229,16 @@ struct ActionButtonView : View {
                             .animation(.easeInOut)
 
                 })
-                .dropDestination(for: String.self) { actionID, location in
-                    print(actionID[0], " to: ", self.row, self.col)
-                    appState.connectedHost.swapActions(source: actionID[0], target: (page: self.pageNum, row: self.row-1, col: self.col-1)) {_ in 
-                        needsUpdate = true
-                    }
-                    return true
-                } isTargeted: {
-                    isDropTargeted = $0
-                }
-        
+//                .dropDestination(for: String.self) { actionID, location in
+//                    print(actionID[0], " to: ", self.row, self.col)
+//                    appState.connectedHost.swapActions(source: actionID[0], target: (page: self.pageNum, row: self.row-1, col: self.col-1)) {_ in 
+//                        needsUpdate = true
+//                    }
+//                    return true
+//                } isTargeted: {
+//                    isDropTargeted = $0
+//                }
+//        
                 
         
                 
@@ -359,12 +363,10 @@ struct ActionErrorButtonCompletionIcon : View {
 
 struct ActionButtonPreviewa_Previews: PreviewProvider {
     static var previews: some View {
-        
         HomeView().environmentObject({
             () -> AppState in
             let envObject = AppState()
             var testActionPage = ActionPage()
-            testActionPage.actions[0][0] = Action()
             envObject.connectedHost =  HostViewModel(host:Host(name: "MatbbokPro", ip: "Test", code: "1122", actionPages: []))
             return envObject
         }())

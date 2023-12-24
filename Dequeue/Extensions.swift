@@ -42,10 +42,10 @@ public extension View {
     func iconPicker(
         isPresented: Binding<Bool>,
         selectedIconName: Binding<String>,
-        selectedColor: Binding<String>
+        selectedColor: String
     ) -> some View {
         sheet(isPresented: isPresented) {
-            CustomIconPickerView(selectedIconName: selectedIconName, selectedColor: selectedColor, isPresented: isPresented)
+            CustomIconPickerView(selectedIconName: selectedIconName, isPresented: isPresented, selectedColor: selectedColor)
         }
     }
     

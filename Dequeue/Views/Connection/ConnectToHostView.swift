@@ -20,13 +20,22 @@ struct ConnectToHostView: View {
             VStack {
                 DetectedHostsListView(detectedHosts: $appState.detectedHosts, appState: appState)
                 Spacer()
-                Button(action: {
-                    print("++ Starting scan for devices on local network...")
-                    appState.connectedHost.isHostConnected = false
-                    appState.startScan()
-                })
-                {
-                    Text("Refresh")
+                VStack {
+                    Button(action: {
+                        print("++ Starting scan for devices on local network...")
+                        appState.connectedHost.isHostConnected = false
+                        appState.startScan()
+                    })
+                    {
+                        Text("Refresh")
+                    }
+                    Button{
+                        if let url = URL(string: "https://www.matthewsand.info/Gizmo") {
+                            UIApplication.shared.open(url)
+                        }
+                    } label: {
+                        Text("Download Desktop")
+                    }
                 }
                 Button(action: {
                     showQRScanner.toggle()

@@ -13,7 +13,7 @@ import UIKit
 
 struct OnboardingView: View {
     @State var hideContinue = true
-    @State var currentPage : Int = 0
+    @State var currentPage : Int = 2
     @EnvironmentObject var appState : AppState
     
     var body: some View {
@@ -42,7 +42,7 @@ struct OnboardingView: View {
             } label: {
                 HStack {
                     Spacer()
-                    Text(currentPage == 3 ? "Get Started ⚡" : "Continue >")
+                    Text(currentPage == 3 ? "Get Started ⚡" : "Continue")
                         .font(.system(size: 25, weight: .bold))
                         .animation(.easeInOut)
                     Spacer()
@@ -177,8 +177,8 @@ struct ThirdOnboardingView : View {
                 .padding()
                 .multilineTextAlignment(.center)
             Button{
-                if let url = URL(string: "www.matthewsand.info/Gizmo") {
-                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                if let url = URL(string: "https://www.matthewsand.info/Gizmo") {
+                    UIApplication.shared.open(url)
                 }
             } label: {
                 Text("Go to the Website")
@@ -195,6 +195,7 @@ struct ThirdOnboardingView : View {
                     .resizable()
                     .foregroundColor(.white)
                     .symbolRenderingMode(.monochrome)
+                    .font(.system(size:16, weight:.ultraLight))
                     
                     .scaledToFit()
                     .overlay {

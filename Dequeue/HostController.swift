@@ -17,11 +17,14 @@ struct Group : Hashable, Encodable, Decodable, Equatable {
 }
 
 struct Action : Hashable, Encodable, Decodable, Equatable {
-    var icon : String = ""
+    var icon : String = "bolt.fill"
     var name : String = ""
     var type : String = ""
+    var displayType : String = ""
     var key : String = ""
-    var color : String = "#FFFFFF"
+    var color : String = "#323232"
+    var textColor : String = "#FFFFFF"
+    var foregroundColor: String = "#FFFFFF"
     var modifiers : [String: Bool] = [
         "Shift": false,
         "Control": false,
@@ -32,20 +35,93 @@ struct Action : Hashable, Encodable, Decodable, Equatable {
     var uid: String = UUID().uuidString
     var page : Int?
     var nameVisible: Bool = true
+    var iconVisible: Bool = true
     var siriShortcut : String = ""
     var text : String = ""
+    
+    init(icon: String = "bolt.fill",
+            name: String = "",
+            type: String = "",
+            displayType: String = "button",
+            key: String = "",
+            color: String = "#323232",
+            textColor: String = "#FFFFFF",
+            foregroundColor: String = "#FFFFFF",
+            modifiers: [String: Bool] = ["Shift": false, "Control": false, "Option": false, "Command": false, "Windows": false],
+            uid: String = UUID().uuidString,
+            page: Int? = nil,
+            nameVisible: Bool = true,
+            iconVisible: Bool = true,
+            siriShortcut: String = "",
+            text: String = "") {
+           self.icon = icon
+           self.name = name
+           self.type = type
+           self.displayType = displayType
+           self.key = key
+           self.color = color
+           self.textColor = textColor
+           self.foregroundColor = foregroundColor
+           self.modifiers = modifiers
+           self.uid = uid
+           self.page = page
+           self.nameVisible = nameVisible
+           self.iconVisible = iconVisible
+           self.siriShortcut = siriShortcut
+           self.text = text
+       }
+
+    
+    
+    init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+
+            // Decoding each property with default value fallback
+            icon = try container.decodeIfPresent(String.self, forKey: .icon) ?? "bolt.fill"
+            name = try container.decodeIfPresent(String.self, forKey: .name) ?? ""
+            type = try container.decodeIfPresent(String.self, forKey: .type) ?? ""
+            displayType = try container.decodeIfPresent(String.self, forKey: .displayType) ?? "button"
+            key = try container.decodeIfPresent(String.self, forKey: .key) ?? ""
+            color = try container.decodeIfPresent(String.self, forKey: .color) ?? "#323232"
+            textColor = try container.decodeIfPresent(String.self, forKey: .textColor) ?? "#FFFFFF"
+            foregroundColor = try container.decodeIfPresent(String.self, forKey: .foregroundColor) ?? "#FFFFFF"
+            modifiers = try container.decodeIfPresent([String: Bool].self, forKey: .modifiers) ?? [
+                "Shift": false,
+                "Control": false,
+                "Option": false,
+                "Command": false,
+                "Windows": false
+            ]
+            uid = try container.decodeIfPresent(String.self, forKey: .uid) ?? UUID().uuidString
+            page = try container.decodeIfPresent(Int.self, forKey: .page)
+            nameVisible = try container.decodeIfPresent(Bool.self, forKey: .nameVisible) ?? true
+            iconVisible = try container.decodeIfPresent(Bool.self, forKey: .iconVisible) ?? true
+            siriShortcut = try container.decodeIfPresent(String.self, forKey: .siriShortcut) ?? ""
+            text = try container.decodeIfPresent(String.self, forKey: .text) ?? ""
+        }
+    
+    
 }
 
 
 struct ActionPage : Hashable, Encodable, Decodable, Equatable  {
-    static var rowCount = 5;
-    static var colCount = 3;
-    var actions: [[Action?]]
+    static var maxColCount = 4
+    static var maxRowCount = 6
+    var actions: [String?]
     init() {
-        actions = Array(repeating: Array(repeating: nil, count: Self.colCount), count: Self.rowCount)
+        actions = Array(repeating: nil, count: Self.maxColCount * Self.maxRowCount)
+    }
+    
+    init(actions: [String?]) {
+        self.actions = actions
     }
 }
 
+
+struct FetchActionsResponse: Decodable {
+    var layout: [ActionPage]
+    let actions: [String : Action]
+}
 
 struct Host : Hashable, Encodable, Decodable {
     var name: String = ""
@@ -54,6 +130,7 @@ struct Host : Hashable, Encodable, Decodable {
     var isMac : Bool = false
     
     var actionPages : [ActionPage] = []
+    var actions: [String: Action] = [:]
     
     func sanitizedName() -> String {
         var tempName = name
@@ -112,12 +189,31 @@ class HostViewModel: ObservableObject {
                 if let data = data {
                     do {
                         let decoder = JSONDecoder()
-                        let receivedActions = try decoder.decode([ActionPage].self, from: data)
+                        var serverResponse = try decoder.decode(FetchActionsResponse.self, from: data)
+                        print(serverResponse.layout)
                         print("Successfully retrieved actions")
-                        self?.host.actionPages = receivedActions  // Update the host's actions
-                        completion?(receivedActions)
+                        
+                        // Resize each ActionPage to adhere to the max row and column count
+                        serverResponse.layout = serverResponse.layout.map { page in
+                            var updatedActions = page.actions
+                            let requiredSize = ActionPage.maxColCount * ActionPage.maxRowCount
+                            if updatedActions.count < requiredSize {
+                                updatedActions += Array(repeating: nil, count: requiredSize - updatedActions.count)
+                                
+                            } else if updatedActions.count > requiredSize {
+                                updatedActions = Array(updatedActions.prefix(requiredSize))
+                            }
+                            return ActionPage(actions: updatedActions)
+                        }
+
+                        self?.host.actionPages = serverResponse.layout  // Update the host's actionPages
+                        self?.host.actions = serverResponse.actions    // Update the host's actions
+                            
+                        print("ACTIONS:")
+                        print(serverResponse.actions)
+                        completion?(serverResponse.layout)
                     } catch {
-                        print("Error decoding Actions: \(error)")
+                        print("Error decoding server response: \(error)")
                         completion?([])
                     }
                 } else {
@@ -128,6 +224,8 @@ class HostViewModel: ObservableObject {
 
         task.resume()
     }
+
+
 
     
     func createAction(action: inout Action, page: Int, completion: ((Result<Void, Error>) -> Void)? = nil) {
@@ -283,8 +381,8 @@ class HostViewModel: ObservableObject {
         task.resume()
     }
 
-    func swapActions(source : String, target: (page: Int, row: Int, col: Int), completion: ((Result<Void, Error>) -> Void)? = nil) {
-        guard let url = URL(string: "http://\(self.host.ip):\(portUsed)/swapAction") else {
+    func swapActions(source : String, target: (page: Int, index: Int), completion: ((Result<Void, Error>) -> Void)? = nil) {
+        guard let url = URL(string: "http://\(self.host.ip):\(portUsed)/swapActions") else {
             completion?(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
             return
         }
@@ -296,9 +394,8 @@ class HostViewModel: ObservableObject {
 
         let jsonBody: [String: Any] = [
             "source": source,
-            "targetPage": target.page,
-            "targetRow": target.row,
-            "targetCol": target.col
+            "targetPage": 0,
+            "targetIndex": target.index,
         ]
         
         do {
@@ -311,16 +408,21 @@ class HostViewModel: ObservableObject {
         let task = URLSession.shared.dataTask(with: request) { [code = self.host.code] data, response, error in
             if let error = error {
                 completion?(.failure(error))
+                
                 return
             }
 
             if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
                 completion?(.failure(NSError(domain: "", code: httpResponse.statusCode, userInfo: nil)))
+                print("HERE")
+                print(httpResponse.statusCode)
                 return
             }
 
             completion?(.success(()))
         }
+        
+        
 
         task.resume()
     }

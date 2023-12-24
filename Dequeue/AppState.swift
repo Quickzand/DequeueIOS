@@ -56,6 +56,7 @@ class AppState: ObservableObject {
     @Published var showEditAction : Bool = false
     @Published var currentlyEditingAction : Action = Action()
     @Published var settings : Settings = Settings()
+    @Published var needsUpdate : Bool = false
     
     
     func getSavedSettings() {
@@ -83,7 +84,7 @@ class AppState: ObservableObject {
         self.detectedHosts = []
         
         let port = portUsed  // Use the same port you defined earlier
-        let subnetsToScan = ["192.168.0.", "10.32.195.", "10.108.12."]  // Add more subnets as needed
+        let subnetsToScan = ["192.168.0.", "10.32.195.", "10.108.12.", "192.168.5.", "172.20.10."]  // Add more subnets as needed
         
         let dispatchGroup = DispatchGroup()
         

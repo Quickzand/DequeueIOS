@@ -14,39 +14,9 @@ struct CustomIconPickerView: View {
     
     @Binding var selectedIconName: String
     @State private var searchQuery: String = ""
-    @Binding var selectedColor: String
-    @State private var color: Color = .white
     @Binding var isPresented : Bool
-    
-    let presetColors: [String] = [
-        "#FFFFFF", // White
-        "#000000", // Black
-        "#FF0000", // Red
-        "#FF7F00", // Orange
-        "#FFFF00", // Yellow
-        "#7FFF00", // Chartreuse
-        "#00FF7F", // SpringGreen
-        "#00FFFF", // Cyan
-        "#007FFF", // Azure
-        "#0000FF", // Blue
-        "#7F00FF", // Violet
-        "#FF00FF", // Magenta
-        "#FF007F", // Rose
-        "#8B4513", // SaddleBrown
-        "#D2691E", // Chocolate
-        "#20B2AA", // LightSeaGreen
-        "#6A5ACD", // SlateBlue
-        "#708090", // SlateGray
-        "#B22222", // Firebrick
-        "CUSTOM"
-    ]
-
-
-
-    
-    
+    @State var selectedColor : String
     @State private var currentSection : String = "Icon"
-    let pickerSelections = ["Icon", "Color"]
     
     
 
@@ -67,57 +37,32 @@ struct CustomIconPickerView: View {
                 VStack {
                     Spacer()
                     Image(systemName:selectedIconName)
-                        .font(.system(size: 80))
+                        .font(.system(size: 160))
                         .frame(width:100, height: 100)
                         .padding()
                         .foregroundColor(Color(hex:selectedColor))
-                        .background(.thinMaterial, in:RoundedRectangle(cornerRadius: 25))
                     Spacer()
                     
                 }
                 .frame(maxWidth:.infinity)
                 Spacer()
                 VStack {
-                    Picker("Section", selection: $currentSection) {
-                        ForEach(pickerSelections, id: \.self) {
-                            Text($0)
-                        }
-                    }
-                    .pickerStyle(.segmented)
-                    .padding()
                     
-                    
-                    if (currentSection == "Icon") {
                         TextField("Search", text: $searchQuery)
                             .padding(.all,10)
                             .background(Color(.systemGray6))
                             .cornerRadius(8)
+                            .padding()
                         ScrollView {
                             LazyVGrid(columns: [
                                 GridItem(.adaptive(minimum: 80))
                             ], spacing: 20) {
                                 ForEach(filteredSymbols.sorted(), id:\.self) {iconName in
-                                    IconButton(iconName: iconName, selectedIconName: $selectedIconName, color: $color, isPresented: $isPresented)
+                                    IconButton(iconName: iconName, selectedIconName: $selectedIconName, color: selectedColor, isPresented: $isPresented)
                                     
                                 }
                             }
                         }
-                    }
-                    else {
-                        VStack {
-                            Spacer()
-                            Grid(horizontalSpacing: 20, verticalSpacing: 20) {
-                                ForEach(presetColors.chunked(into: 5), id: \.self) { rowColors in
-                                            GridRow {
-                                                ForEach(rowColors, id: \.self) { color in
-                                                    ColorPickerButtonView(color: color, selectedColor: $selectedColor)
-                                                }
-                                            }
-                                        }
-                            }
-                            Spacer()
-                        }
-                    }
                 }
                 .background(.thinMaterial)
                 .frame(height:400)
@@ -170,7 +115,7 @@ struct ColorPickerButtonView : View {
 struct IconButton : View {
     var iconName : String
     @Binding var selectedIconName: String
-    @Binding var color : Color
+    @State var color : String
     @Binding var isPresented : Bool
     var size : Double = 50
     var body : some View {
@@ -180,7 +125,7 @@ struct IconButton : View {
             Image(systemName: iconName)
         }
         .font(.system(size: size - 10))
-        .foregroundColor(color)
+        .foregroundColor(Color(hex:color))
         .frame(width:size,height:size)
         .padding()
         .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 20.0))
@@ -200,7 +145,7 @@ struct CustomIconPickerView_Previews: PreviewProvider {
         @State private var selectedColor: String = "#FFFFFF"
 
         var body: some View {
-            CustomIconPickerView(selectedIconName: $selectedIconName, selectedColor: $selectedColor, isPresented: .constant(true))
+            CustomIconPickerView(selectedIconName: $selectedIconName, isPresented: .constant(true), selectedColor: selectedColor)
         }
     }
 
