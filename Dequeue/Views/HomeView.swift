@@ -26,6 +26,10 @@ struct HomeView: View {
     
     @State var needsUpdate = false
     
+    
+    
+    
+    
     var layout = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
     
     var body: some View {
@@ -83,6 +87,10 @@ struct ActionPageView : View {
     @Binding var needsUpdate: Bool
     @State private var isDragAndDropOccuring = false
     
+    
+    @State private var isResizeOccuring = false
+    @State private var resizingIndex = 0
+    
     @State private var buttonScale = 1.0
     @State private var buttonOpacity = 1.0
     var gridLayout = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
@@ -92,7 +100,7 @@ struct ActionPageView : View {
             LazyVGrid(columns: gridLayout, spacing: 10) {
                 ForEach(0..<actionsLayout.count, id: \.self) {index in
                     VStack {
-                        ActionSlot(action: appState.connectedHost.host.actions[actionsLayout[index] ?? "NOT AN ACTION"], editMode: $editMode, needsUpdate: $needsUpdate, index: index)
+                        ActionSlot(action: appState.connectedHost.host.actions[actionsLayout[index] ?? "NOT AN ACTION"], editMode: $editMode, needsUpdate: $needsUpdate, isResizeOccuring: $isResizeOccuring, resizingIndex: $resizingIndex, index: index)
                     }
                     //                            .animation(Animation.spring().delay(0.15 * Double(calcDistance(col: colNum, row: indexedAction.index, origin: (col:2, row:3))))) // Adjust the animation as needed
                     .opacity(buttonOpacity)

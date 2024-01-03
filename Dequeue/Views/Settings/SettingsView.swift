@@ -29,7 +29,6 @@ struct SettingsView: View {
                 }
             })
             
-            SettingsAccentsListView()
             
             SettingsItemToggleView(title: "Background on Actions Screen", iconName: "", toggle: $appState.settings.showHomeScreenBackground)
             
@@ -98,6 +97,41 @@ struct SettingsItemToggleView : View  {
             .padding()
         }
         .foregroundColor(.white)
+    }
+}
+
+
+struct Background {
+    
+}
+
+struct SettingsBackgroundsListView : View {
+    @State private var colors : [Color] = [Color.red, Color.blue, Color.green, Color.red, Color.red, Color.red]
+    @State private var isSelected : Bool = false
+    var body : some View {
+        VStack {
+            Text("Backgrounds")
+            ScrollView([.horizontal]) {
+                HStack {
+                    ForEach(colors, id: \.self) {color in
+                        VStack {
+                            VStack {
+                                
+                            }
+                            .frame(width:50, height:50)
+                            .background(color, in: RoundedRectangle(cornerRadius: 20))
+                            Text("Name")
+                        }
+                        .padding()
+                        
+                        
+                    }
+                }
+            }
+        }
+        .padding()
+        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 20))
+        .padding()
     }
 }
 

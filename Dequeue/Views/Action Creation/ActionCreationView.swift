@@ -15,12 +15,40 @@ enum ActionType {
     case none
 }
 
+var allowedSpecialKeys = [
+    "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12",
+    "Esc", "Tab", "Insert", "Delete",
+    "Up", "Down", "Left", "Right",
+    "Backspace", "Enter", "Space"
+]
 
+
+
+struct KeybindTextFieldView : View {
+    @Binding var keyBinding : String
+    
+    
+
+    var body : some View {
+        TextField(text: $keyBinding) {
+        }
+        .onChange(of: keyBinding) { newValue in
+            if newValue.count > 1  && !allowedSpecialKeys.contains(newValue) {
+                keyBinding = String(newValue.dropLast())
+            }
+        }
+        .font(.system(size: keyBinding.count < 3 ? 30 : 15, weight: .bold))
+        .frame(width: 75, height: 75)
+        .multilineTextAlignment(.center)
+        .submitLabel(.done)
+        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 20))
+    }
+}
 struct ActionCreationView: View {
     @State private var selectedActionType : ActionType = .shortcut
     @State private var iconPickerPresented = false
     @State private var newAction = Action(icon: "bolt.fill", name: "New Action", type: "shortcut")
-    @State var editingAction : Action? 
+    @State var editingAction : Action?
     @EnvironmentObject var appState: AppState
     @State private var actionColor = Color(.white);
     @State private var currentAction = Action()
@@ -63,16 +91,16 @@ struct ActionCreationView: View {
         VStack {
             Text("Knob")
                 .font(.system(size:30, weight: .bold))
-                .foregroundColor(.white)
+                .foregroundColor(.primary)
                 .padding(.top)
             ZStack {
                 ZStack {
                     Circle()
                         .frame(width: 160, height: 160)
-                        .foregroundColor(Color(hex:newAction.foregroundColor))
+                        .foregroundColor(Color(hex:newAction.color))
                     RoundedRectangle(cornerRadius:50.0 )
                         .frame(width: 4, height:40)
-                        .foregroundColor(Color(hex:newAction.color))
+                        .foregroundColor(.black)
                         .offset(x:0, y:-51.0)
                 }
                 Image(systemName: newAction.icon)
@@ -80,15 +108,14 @@ struct ActionCreationView: View {
                     .frame(maxWidth:100, maxHeight:100)
                     .aspectRatio(contentMode: .fit)
                     .opacity(newAction.iconVisible ? 0.25 : 0)
-                    .foregroundColor(.black)
+                    .foregroundColor(Color(hex:newAction.foregroundColor))
                 Text(newAction.name)
-                    .foregroundStyle(.black)
-                    .font(.system(size: 12, weight:.bold))
+                    .foregroundColor(Color(hex:newAction.textColor))
+                    .font(.system(size: 20, weight:.bold))
                     .opacity(newAction.nameVisible ? 1 : 0)
                     .padding(.bottom, 5)
             }
             .frame(width: 180, height: 180)
-            .background(Color(hex: newAction.color))
             .clipShape(RoundedRectangle(cornerRadius: 40))
         }
         
@@ -99,7 +126,7 @@ struct ActionCreationView: View {
         VStack {
             Text("Button")
                 .font(.system(size:30, weight: .bold))
-                .foregroundColor(.white)
+                .foregroundColor(.primary)
                 .padding(.top)
             ZStack {
                 Image(systemName: newAction.icon)
@@ -201,7 +228,6 @@ struct ActionCreationView: View {
                     .padding()
                     .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
                     .font(.title)
-                    
                 }
             }.padding(.top)
         }
@@ -210,24 +236,36 @@ struct ActionCreationView: View {
     
     var FunctionalityOptionsView : some View {
         ScrollView([.vertical]) {
-            
-                HStack {
-                    ActionTypeButtonView(associatedAction: "shortcut", selectedActionType: $newAction.type)
-                    ActionTypeButtonView(associatedAction: "siriShortcut", selectedActionType: $newAction.type)
-                    ActionTypeButtonView(associatedAction: "text", selectedActionType: $newAction.type)
+            VStack {
+                ScrollView([.horizontal]) {
+                    HStack {
+                        Spacer()
+                        ActionTypeButtonView(associatedAction: "shortcut", selectedActionType: $newAction.type)
+                        Spacer()
+                        ActionTypeButtonView(associatedAction: "siriShortcut", selectedActionType: $newAction.type)
+                        Spacer()
+                        ActionTypeButtonView(associatedAction: "systemCommand", selectedActionType: $newAction.type)
+                        Spacer()
+                        ActionTypeButtonView(associatedAction: "text", selectedActionType: $newAction.type)
+                        Spacer()
+                    }
                 }
-            switch newAction.type {
-            case "shortcut":
-                shortcutCreationView
-            case "siriShortcut":
-                siriShortcutCreationView
-            case "text":
-                textCreationView
-            default:
-                EmptyView()
+                switch newAction.type {
+                case "shortcut":
+                    shortcutCreationView
+                case "siriShortcut":
+                    siriShortcutCreationView
+                case "systemCommand":
+                    systemCommandCreationView
+                case "text":
+                    textCreationView
+                default:
+                    EmptyView()
+                }
             }
-                
-        }
+            .padding(.bottom, isKeyboardVisible ? 300 : 0)
+        }.frame(minHeight: isKeyboardVisible ? 500 : 0)
+            .padding(.bottom, isKeyboardVisible ? 200 : 0)
     }
     
     
@@ -241,7 +279,7 @@ struct ActionCreationView: View {
                 .background(.ultraThinMaterial, in:RoundedRectangle(cornerRadius: 25.0))
                 .frame(height: 400)
             
-                
+            
             
         }
         .padding(.horizontal)
@@ -253,41 +291,112 @@ struct ActionCreationView: View {
             Text("Shortcut:")
                 .padding(.top)
                 .font(.system(size: 20, weight:.bold))
+            if(newAction.displayType == "knob") {
+                Text("Clockwise:")
+                    .font(.system(size: 20, weight:.bold))
+                    .padding(.top)
+            }
             Picker("Select a Shortcut", selection: $newAction.siriShortcut) {
-                 ForEach(siriShortcuts, id: \.self) { option in
-                     Text(option).onAppear{
-                         print(option)
-                     }
-                 }
-             }
+                ForEach(siriShortcuts, id: \.self) { option in
+                    Text(option).onAppear{
+                    }
+                }
+            }
             .pickerStyle(MenuPickerStyle())
             .padding()
             .frame(maxWidth:.infinity)
             .background(.ultraThinMaterial)
             .clipShape(RoundedRectangle(cornerRadius: 25.0))
             .padding(.horizontal)
+            if(newAction.displayType == "knob") {
+                Text("Counter Clockwise:")
+                    .font(.system(size: 20, weight:.bold))
+                    .padding(.top)
+                Picker("Select a Shortcut", selection: $newAction.ccSiriShortcut) {
+                    ForEach(siriShortcuts, id: \.self) { option in
+                        Text(option).onAppear{
+                        }
+                    }
+                }
+                .pickerStyle(MenuPickerStyle())
+                .padding()
+                .frame(maxWidth:.infinity)
+                .background(.ultraThinMaterial)
+                .clipShape(RoundedRectangle(cornerRadius: 25.0))
+                .padding(.horizontal)
+            }
+            
         }
         .padding(.horizontal)
     }
     
+    var systemCommandCreationView : some View {
+        VStack {
+            Text("System Command:")
+                .padding(.top)
+                .font(.system(size: 20, weight:.bold))
+            if(newAction.displayType == "knob") {
+                Text("Clockwise:")
+                    .font(.system(size: 20, weight:.bold))
+                    .padding(.top)
+            }
+            Picker("Select a Command", selection: $newAction.siriShortcut) {
+                ForEach(siriShortcuts, id: \.self) { option in
+                    Text(option).onAppear{
+                    }
+                }
+            }
+            .pickerStyle(MenuPickerStyle())
+            .padding()
+            .frame(maxWidth:.infinity)
+            .background(.ultraThinMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: 25.0))
+            .padding(.horizontal)
+            if(newAction.displayType == "knob") {
+                Text("Counter Clockwise:")
+                    .font(.system(size: 20, weight:.bold))
+                    .padding(.top)
+                Picker("Select a Command", selection: $newAction.ccSiriShortcut) {
+                    ForEach(siriShortcuts, id: \.self) { option in
+                        Text(option).onAppear{
+                        }
+                    }
+                }
+                .pickerStyle(MenuPickerStyle())
+                .padding()
+                .frame(maxWidth:.infinity)
+                .background(.ultraThinMaterial)
+                .clipShape(RoundedRectangle(cornerRadius: 25.0))
+                .padding(.horizontal)
+            }
+            
+        }
+        .padding(.horizontal)
+    }
+    
+    
+    @FocusState private var focusedField: Field?
+    
+    enum Field {
+        case key, ccKey
+    }
+    
+    
+    
+    
     var shortcutCreationView : some View {
         VStack {
+            if(newAction.displayType == "knob") {
+                Text("Clockwise:")
+                    .font(.system(size: 20, weight:.bold))
+                    .padding(.top)
+            }
             HStack {
                 Text("Key:")
                     .font(.system(size: 20, weight:.bold))
                 Spacer()
-                TextField(text: $newAction.key) {
-                }
-                .onChange(of: newAction.key) { newValue in
-                    if newValue.count > 1 {
-                        newAction.key = String(newValue.prefix(1))
-                    }
-                }
-                .font(.system(size: 30, weight: .bold))
-                .frame(width: 75, height: 75)
-                .multilineTextAlignment(.center)
-                .submitLabel(.done)
-                .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 20))
+                KeybindTextFieldView(keyBinding: $newAction.key)
+                    .focused($focusedField, equals: .key)
             }
             .padding(.vertical)
             HStack {
@@ -303,14 +412,59 @@ struct ActionCreationView: View {
                 ModifierButton(icon: "shift", modifierName: "Shift", modifiers: $newAction.modifiers)
                 Spacer()
             }
+            
+            if(newAction.displayType == "knob") {
+                Text("Counter Clockwise:")
+                    .font(.system(size: 20, weight:.bold))
+                    .padding(.top)
+                
+                HStack {
+                    Text("Key:")
+                        .font(.system(size: 20, weight:.bold))
+                    Spacer()
+                    KeybindTextFieldView(keyBinding: $newAction.ccKey)
+                        .focused($focusedField, equals: .ccKey)
+                }
+                .padding(.vertical)
+                HStack {
+                    Spacer()
+                    if(appState.connectedHost.host.isMac) {
+                        ModifierButton(icon: "command", modifierName: "Command", modifiers: $newAction.ccModifiers)
+                    } else {
+                        ModifierButton(icon: "squareshape.split.2x2", modifierName: "Windows", modifiers: $newAction.modifiers)
+                    }
+                    Spacer()
+                    ModifierButton(icon: "control", modifierName: "Control", modifiers: $newAction.ccModifiers)
+                    Spacer()
+                    ModifierButton(icon: "shift", modifierName: "Shift", modifiers: $newAction.ccModifiers)
+                    Spacer()
+                }
+            }
         }
         .padding(.horizontal)
+        .toolbar {
+            ToolbarItem(placement: .keyboard) {
+                ScrollView(.horizontal) {
+                    HStack {
+                        ForEach(allowedSpecialKeys, id: \.self) {key in
+                            if focusedField == .key {
+                                ToolbarButtonView(key:key, bindedKey: $newAction.key)
+                            } else if focusedField == .ccKey {
+                                ToolbarButtonView(key:key, bindedKey: $newAction.ccKey)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
     }
     
+    
+    @State private var isKeyboardVisible = false
     var body: some View {
-            
-        VStack {
-            TabView(selection:$newAction.displayType) {
+            VStack {
+                TabView(selection:$newAction.displayType) {
                     VStack {
                         ButtonDisplayView
                         Spacer()
@@ -320,14 +474,12 @@ struct ActionCreationView: View {
                         Spacer()
                     }.tag("knob")
                 }
-            
                 .tabViewStyle(.page(indexDisplayMode: .always))
                 .indexViewStyle(.page(backgroundDisplayMode: .automatic))
                 VStack {
                     Picker("", selection: $pickerSelection) {
                         Text("Functionality").tag("functionality")
                         Text("Display").tag("display")
-                        
                     }
                     .padding(.top)
                     .pickerStyle(.segmented)
@@ -336,52 +488,57 @@ struct ActionCreationView: View {
                         DisplayOptionsView.tag("display")
                     }
                     .ignoresSafeArea()
-                        .tabViewStyle(.page(indexDisplayMode: .never))
+                    .tabViewStyle(.page(indexDisplayMode: .never))
                     
                 }
                 .frame(maxWidth:.infinity, maxHeight:.infinity).padding(.horizontal).background(.thinMaterial)
+                
             }
-                    .iconPicker(
-                        isPresented: $iconPickerPresented, selectedIconName: $newAction.icon, selectedColor: newAction.foregroundColor
-                    )
-                    .onAppear{appState.connectedHost.getSiriShortcuts {result, siriShortcuts in
-                        self.siriShortcuts = siriShortcuts
-                    }
-                    
-                    }
-            
-                    .onAppear {
-                        if let editingAction = editingAction {
-                            self.newAction = editingAction
-                        }
-                    }
-                    .toolbar {
-                        ToolbarItem {
-                            Button {
-                                if self.isEditing {
-                                                 appState.connectedHost.updateAction(action: newAction) {_ in
-                                                     appState.connectedHost.fetchActions()
-                                                     {newLayout in
-                                                         needsUpdate = true
-                                                     }
-                                                 }
-                                             }
-                                             else {
-                                                 appState.connectedHost.createAction(action: &newAction, page: appState.currentPage)
-                                             }
-                             
-                                             appState.connectedHost.fetchActions()
-                                             appState.showCreateAction = false
-                                             appState.showEditAction = false
-                            } label: {
-                                Text(isEditing ? "Update" : "Create")
+            .iconPicker(
+                isPresented: $iconPickerPresented, selectedIconName: $newAction.icon, selectedColor: newAction.foregroundColor
+            )
+            .onAppear {
+                appState.connectedHost.getSiriShortcuts { result, siriShortcuts in
+                    self.siriShortcuts = siriShortcuts.sorted { $0.localizedCompare($1) == .orderedAscending }
+                }
+            }
+            .onAppear {
+                if let editingAction = editingAction {
+                    self.newAction = editingAction
+                }
+            }
+            .toolbar {
+                ToolbarItem {
+                    Button {
+                        if self.isEditing {
+                            appState.connectedHost.updateAction(action: newAction) {_ in
+                                appState.connectedHost.fetchActions()
+                                {newLayout in
+                                    needsUpdate = true
+                                }
                             }
                         }
+                        else {
+                            appState.connectedHost.createAction(action: &newAction, page: appState.currentPage)
+                        }
+                        
+                        appState.connectedHost.fetchActions()
+                        appState.showCreateAction = false
+                        appState.showEditAction = false
+                    } label: {
+                        Text(isEditing ? "Update" : "Create")
                     }
-                    .navigationTitle(isEditing ? "Update Action" :  "New Action")
-        .navigationBarTitleDisplayMode(.inline)
-    }
-    
+                }
+            }
+            .navigationTitle(isEditing ? "Update Action" :  "New Action")
+            .navigationBarTitleDisplayMode(.inline)
+            .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { _ in
+                       isKeyboardVisible = true
+                   }
+                   .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
+                       isKeyboardVisible = false
+                   }
+        }
 }
 
 
@@ -411,6 +568,13 @@ struct ActionTypeButtonView : View {
                     Spacer()
                     Text("Shortcut")
                         .font(.subheadline)
+                case "systemCommand":
+                    Spacer()
+                    Image(systemName: "slider.horizontal.3")
+                        .font(.system(size: 50))
+                    Spacer()
+                    Text("System Command")
+                        .font(.subheadline)
                 case "text":
                     Spacer()
                     Image(systemName: "character.textbox")
@@ -434,7 +598,7 @@ struct ActionTypeButtonView : View {
             .padding()
             .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 25.0))
         }
-        .foregroundColor((selectedActionType == associatedAction) ? Color("AccentColor") : Color.white)
+        .foregroundColor((selectedActionType == associatedAction) ? Color("AccentColor") : Color.primary)
     }
 }
 
@@ -484,7 +648,21 @@ struct ModifierButton : View {
             }
             Text(modifierName)
         }
-        .foregroundColor(isSelected() ?  Color("AccentColor") : .white)
+        .foregroundColor(isSelected() ?  Color("AccentColor") : .primary)
+    }
+}
+
+
+
+struct ToolbarButtonView : View {
+    var key : String
+    @Binding var bindedKey : String
+    var body : some View {
+        Button {
+            bindedKey = key
+        } label: {
+            Text(key).padding(.horizontal).padding(.vertical, 5).background(.ultraThickMaterial).clipShape(RoundedRectangle(cornerRadius:10.0)).foregroundColor(.primary).font(.system(size: 12.0))
+        }
     }
 }
 

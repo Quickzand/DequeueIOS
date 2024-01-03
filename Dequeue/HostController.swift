@@ -22,10 +22,18 @@ struct Action : Hashable, Encodable, Decodable, Equatable {
     var type : String = ""
     var displayType : String = ""
     var key : String = ""
+    var ccKey : String = ""
     var color : String = "#323232"
     var textColor : String = "#FFFFFF"
     var foregroundColor: String = "#FFFFFF"
     var modifiers : [String: Bool] = [
+        "Shift": false,
+        "Control": false,
+        "Option": false,
+        "Command": false,
+        "Windows": false
+    ]
+    var ccModifiers : [String: Bool] = [
         "Shift": false,
         "Control": false,
         "Option": false,
@@ -37,6 +45,7 @@ struct Action : Hashable, Encodable, Decodable, Equatable {
     var nameVisible: Bool = true
     var iconVisible: Bool = true
     var siriShortcut : String = ""
+    var ccSiriShortcut : String = ""
     var text : String = ""
     
     init(icon: String = "bolt.fill",
@@ -44,21 +53,25 @@ struct Action : Hashable, Encodable, Decodable, Equatable {
             type: String = "",
             displayType: String = "button",
             key: String = "",
+         ccKey: String = "",
             color: String = "#323232",
             textColor: String = "#FFFFFF",
             foregroundColor: String = "#FFFFFF",
             modifiers: [String: Bool] = ["Shift": false, "Control": false, "Option": false, "Command": false, "Windows": false],
+         ccModifiers: [String: Bool] = ["Shift": false, "Control": false, "Option": false, "Command": false, "Windows": false],
             uid: String = UUID().uuidString,
             page: Int? = nil,
             nameVisible: Bool = true,
             iconVisible: Bool = true,
             siriShortcut: String = "",
+        ccSiriShortcut: String = "",
             text: String = "") {
            self.icon = icon
            self.name = name
            self.type = type
            self.displayType = displayType
            self.key = key
+        self.ccKey = ccKey
            self.color = color
            self.textColor = textColor
            self.foregroundColor = foregroundColor
@@ -69,6 +82,8 @@ struct Action : Hashable, Encodable, Decodable, Equatable {
            self.iconVisible = iconVisible
            self.siriShortcut = siriShortcut
            self.text = text
+        self.ccModifiers = ccModifiers
+        self.ccSiriShortcut = ccSiriShortcut
        }
 
     
@@ -82,6 +97,7 @@ struct Action : Hashable, Encodable, Decodable, Equatable {
             type = try container.decodeIfPresent(String.self, forKey: .type) ?? ""
             displayType = try container.decodeIfPresent(String.self, forKey: .displayType) ?? "button"
             key = try container.decodeIfPresent(String.self, forKey: .key) ?? ""
+        ccKey = try container.decodeIfPresent(String.self, forKey: .ccKey) ?? ""
             color = try container.decodeIfPresent(String.self, forKey: .color) ?? "#323232"
             textColor = try container.decodeIfPresent(String.self, forKey: .textColor) ?? "#FFFFFF"
             foregroundColor = try container.decodeIfPresent(String.self, forKey: .foregroundColor) ?? "#FFFFFF"
@@ -92,6 +108,13 @@ struct Action : Hashable, Encodable, Decodable, Equatable {
                 "Command": false,
                 "Windows": false
             ]
+        ccModifiers = try container.decodeIfPresent([String: Bool].self, forKey: .ccModifiers) ?? [
+            "Shift": false,
+            "Control": false,
+            "Option": false,
+            "Command": false,
+            "Windows": false
+        ]
             uid = try container.decodeIfPresent(String.self, forKey: .uid) ?? UUID().uuidString
             page = try container.decodeIfPresent(Int.self, forKey: .page)
             nameVisible = try container.decodeIfPresent(Bool.self, forKey: .nameVisible) ?? true
@@ -209,8 +232,6 @@ class HostViewModel: ObservableObject {
                         self?.host.actionPages = serverResponse.layout  // Update the host's actionPages
                         self?.host.actions = serverResponse.actions    // Update the host's actions
                             
-                        print("ACTIONS:")
-                        print(serverResponse.actions)
                         completion?(serverResponse.layout)
                     } catch {
                         print("Error decoding server response: \(error)")
@@ -345,7 +366,7 @@ class HostViewModel: ObservableObject {
     }
     
     
-    func runAction(actionID: String, completion: ((Result<Void, Error>) -> Void)? = nil) {
+    func runAction(actionID: String, direction: String = "clockwise", completion: ((Result<Void, Error>) -> Void)? = nil) {
         guard let url = URL(string: "http://\(self.host.ip):\(portUsed)/runAction") else {
             completion?(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
             return
@@ -356,7 +377,7 @@ class HostViewModel: ObservableObject {
         request.setValue(self.host.code, forHTTPHeaderField: "code")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
-        let jsonBody = ["actionID": actionID]
+        let jsonBody = ["actionID": actionID, "direction": direction]
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: jsonBody, options: [])
         } catch {

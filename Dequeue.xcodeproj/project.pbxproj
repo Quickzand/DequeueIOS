@@ -38,6 +38,7 @@
 		34DA58F32AB0D92500834982 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DA58F22AB0D92500834982 /* Extensions.swift */; };
 		34DA58F62AB233ED00834982 /* BackgroundSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DA58F52AB233ED00834982 /* BackgroundSettingsView.swift */; };
 		34DBD2572AAA761F00C7D641 /* CustomColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DBD2562AAA761F00C7D641 /* CustomColors.swift */; };
+		34E547002B44B47200177A21 /* TestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E546FF2B44B47200177A21 /* TestView.swift */; };
 		34FF80D32AD67122006A6F2E /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34FF80D22AD67122006A6F2E /* OnboardingView.swift */; };
 /* End PBXBuildFile section */
 
@@ -89,6 +90,7 @@
 		34DA58F22AB0D92500834982 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		34DA58F52AB233ED00834982 /* BackgroundSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundSettingsView.swift; sourceTree = "<group>"; };
 		34DBD2562AAA761F00C7D641 /* CustomColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomColors.swift; sourceTree = "<group>"; };
+		34E546FF2B44B47200177A21 /* TestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestView.swift; sourceTree = "<group>"; };
 		34FF80D22AD67122006A6F2E /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -125,6 +127,7 @@
 		342346F52AA9630400A287E2 = {
 			isa = PBXGroup;
 			children = (
+				34E546FF2B44B47200177A21 /* TestView.swift */,
 				34B0E0442B366CD600672566 /* VolumeKnob.swift */,
 				34546AD72ADB06AF0065E86D /* AnimatedImages */,
 				342347002AA9630400A287E2 /* Dequeue */,
@@ -386,6 +389,7 @@
 			files = (
 				34B0E0452B366CD600672566 /* VolumeKnob.swift in Sources */,
 				3423472F2AAA144400A287E2 /* ConnectToHostView.swift in Sources */,
+				34E547002B44B47200177A21 /* TestView.swift in Sources */,
 				34205B452AADAC5C0083E6C2 /* ActionCreationView.swift in Sources */,
 				34DA58F12AAF898000834982 /* HostController.swift in Sources */,
 				346FA4E22AC0DF0B00215CEE /* CustomIconPickerView.swift in Sources */,
