@@ -54,6 +54,7 @@ struct ActionCreationView: View {
     @State private var currentAction = Action()
     
     @State private var siriShortcuts : [String] = []
+    @State private var systemCommands : [String] = []
     
     
     @State private var selectedBackgroundColor : Color = Color(hex:Action().color)
@@ -182,7 +183,7 @@ struct ActionCreationView: View {
                     }
             }.padding(.top)
             HStack {
-                Text("Foreground Color:")
+                Text("Icon Color:")
                     .font(.system(size: 20, weight:.bold))
                 Spacer()
                 ColorPicker("", selection: $selectedForegroundColor, supportsOpacity: false)
@@ -237,6 +238,15 @@ struct ActionCreationView: View {
     var FunctionalityOptionsView : some View {
         ScrollView([.vertical]) {
             VStack {
+                if(newAction.displayType == "knob") {
+                    HStack {
+                        Text("Knob Sensitivity:")
+                            .font(.system(size: 20, weight:.bold))
+                        Slider(value: $newAction.knobSensitivity,
+                               in: 0...100,
+                               step:1)
+                    }
+                }
                 ScrollView([.horizontal]) {
                     HStack {
                         Spacer()
@@ -340,8 +350,8 @@ struct ActionCreationView: View {
                     .font(.system(size: 20, weight:.bold))
                     .padding(.top)
             }
-            Picker("Select a Command", selection: $newAction.siriShortcut) {
-                ForEach(siriShortcuts, id: \.self) { option in
+            Picker("Select a Command", selection: $newAction.systemCommand) {
+                ForEach(systemCommands, id: \.self) { option in
                     Text(option).onAppear{
                     }
                 }
@@ -356,8 +366,8 @@ struct ActionCreationView: View {
                 Text("Counter Clockwise:")
                     .font(.system(size: 20, weight:.bold))
                     .padding(.top)
-                Picker("Select a Command", selection: $newAction.ccSiriShortcut) {
-                    ForEach(siriShortcuts, id: \.self) { option in
+                Picker("Select a Command", selection: $newAction.ccSystemCommand) {
+                    ForEach(systemCommands, id: \.self) { option in
                         Text(option).onAppear{
                         }
                     }
@@ -500,6 +510,10 @@ struct ActionCreationView: View {
             .onAppear {
                 appState.connectedHost.getSiriShortcuts { result, siriShortcuts in
                     self.siriShortcuts = siriShortcuts.sorted { $0.localizedCompare($1) == .orderedAscending }
+                }
+                
+                appState.connectedHost.getSystemCommands { result, systemCommands in
+                    self.systemCommands = systemCommands
                 }
             }
             .onAppear {

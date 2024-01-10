@@ -221,8 +221,6 @@ struct FinalOnboardingView : View {
                 .font(.system(size:25, weight: .semibold))
                 .multilineTextAlignment(.center)
             Spacer()
-            ActionButtonView(action: displayAction, editMode: .constant(false), col: 0, row: 0, pageNum: 0, isDragAndDropOccuring: .constant(false), needsUpdate: .constant(false), isDisplayAction: true)
-                .scaleEffect(1.5)
             Spacer()
         }
     }

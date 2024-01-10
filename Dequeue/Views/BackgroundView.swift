@@ -15,7 +15,24 @@ struct GradientSquare: View {
 }
 
 
-struct BackgroundView: View {
+struct BackgroundView : View {
+    @EnvironmentObject var appState : AppState
+    var body : some View {
+        switch appState.settings.selectedBackground {
+        case "Grid":
+            GridBackgroundView()
+        case "custom":
+            VStack {
+                Rectangle().fill(Color(hex:appState.settings.selectedBackgroundColor)).ignoresSafeArea()
+            }
+        default:
+            EmptyView()
+        }
+    }
+}
+
+
+struct GridBackgroundView: View {
     let gap: CGFloat = 0
     let initialSquareSize: CGFloat = 50
     @State private var animateAfterAppear = false  // New state variable to control animation
@@ -81,5 +98,6 @@ struct BackgroundView: View {
 struct GradientGridBackground_Previews: PreviewProvider {
     static var previews: some View {
         BackgroundView()
+            .environmentObject(AppState())
     }
 }

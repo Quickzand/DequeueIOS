@@ -23,6 +23,7 @@ struct Action : Hashable, Encodable, Decodable, Equatable {
     var displayType : String = ""
     var key : String = ""
     var ccKey : String = ""
+    var knobSensitivity : Double = 50
     var color : String = "#323232"
     var textColor : String = "#FFFFFF"
     var foregroundColor: String = "#FFFFFF"
@@ -46,7 +47,12 @@ struct Action : Hashable, Encodable, Decodable, Equatable {
     var iconVisible: Bool = true
     var siriShortcut : String = ""
     var ccSiriShortcut : String = ""
+    var systemCommand : String = ""
+    var ccSystemCommand : String = ""
+    
     var text : String = ""
+
+    
     
     init(icon: String = "bolt.fill",
             name: String = "",
@@ -65,7 +71,9 @@ struct Action : Hashable, Encodable, Decodable, Equatable {
             iconVisible: Bool = true,
             siriShortcut: String = "",
         ccSiriShortcut: String = "",
-            text: String = "") {
+     systemCommand : String = "",
+    ccSystemCommand : String = "",
+            text: String = "", knobSensitivity : Double = 50) {
            self.icon = icon
            self.name = name
            self.type = type
@@ -84,6 +92,9 @@ struct Action : Hashable, Encodable, Decodable, Equatable {
            self.text = text
         self.ccModifiers = ccModifiers
         self.ccSiriShortcut = ccSiriShortcut
+        self.systemCommand = systemCommand
+        self.ccSystemCommand = ccSystemCommand
+        self.knobSensitivity = knobSensitivity
        }
 
     
@@ -120,7 +131,11 @@ struct Action : Hashable, Encodable, Decodable, Equatable {
             nameVisible = try container.decodeIfPresent(Bool.self, forKey: .nameVisible) ?? true
             iconVisible = try container.decodeIfPresent(Bool.self, forKey: .iconVisible) ?? true
             siriShortcut = try container.decodeIfPresent(String.self, forKey: .siriShortcut) ?? ""
+        ccSiriShortcut = try container.decodeIfPresent(String.self, forKey: .ccSiriShortcut) ?? ""
             text = try container.decodeIfPresent(String.self, forKey: .text) ?? ""
+            systemCommand = try container.decodeIfPresent(String.self, forKey: .systemCommand) ?? ""
+            ccSystemCommand = try container.decodeIfPresent(String.self, forKey: .ccSystemCommand) ?? ""
+            knobSensitivity =  try container.decodeIfPresent(Double.self, forKey: .knobSensitivity) ?? 50
         }
     
     
@@ -479,6 +494,45 @@ class HostViewModel: ObservableObject {
                         let receivedShortcuts = try decoder.decode([String].self, from: data)
                         print("Successfully retrieved siri shortcuts")
                         completion?(.success(()),receivedShortcuts)
+                    } catch {
+                        print("Error decoding Actions: \(error)")
+                }
+                
+            }
+        }
+        task.resume()
+    }
+    
+    
+    func getSystemCommands(completion: ((Result<Void, Error>, [String]) -> Void)? = nil) {
+        print("++ FETCHING SYSTEM COMMANDS")
+        guard let url = URL(string: "http://\(self.host.ip):\(portUsed)/getSystemCommands") else {
+            completion?(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])), [])
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue(self.host.code, forHTTPHeaderField: "code")
+
+        let task = URLSession.shared.dataTask(with: request) { [code = self.host.code] data, response, error in
+            if let error = error {
+                completion?(.failure(error), [])
+                return
+            }
+            
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
+                completion?(.failure(NSError(domain: "", code: httpResponse.statusCode, userInfo: nil)), [])
+                return
+            }
+            
+            
+            if let data = data {
+                    do {
+                        let decoder = JSONDecoder()
+                        let receivedSystemCommands = try decoder.decode([String].self, from: data)
+                        print("Successfully retrieved system commands")
+                        completion?(.success(()),receivedSystemCommands)
                     } catch {
                         print("Error decoding Actions: \(error)")
                 }

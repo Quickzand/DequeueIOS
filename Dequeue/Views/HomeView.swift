@@ -65,7 +65,7 @@ struct HomeView: View {
                     }.tabViewStyle(.page(indexDisplayMode: .automatic))
                     .frame(maxHeight:.infinity)
                 }
-            .background(appState.settings.showHomeScreenBackground ? BackgroundView() : nil)
+            .background(BackgroundView())
                 .onAppear {
                     UIApplication.shared.isIdleTimerDisabled = true
                     
