@@ -30,14 +30,14 @@ struct Action : Hashable, Encodable, Decodable, Equatable {
     var modifiers : [String: Bool] = [
         "Shift": false,
         "Control": false,
-        "Option": false,
+        "Alt": false,
         "Command": false,
         "Windows": false
     ]
     var ccModifiers : [String: Bool] = [
         "Shift": false,
         "Control": false,
-        "Option": false,
+        "Alt": false,
         "Command": false,
         "Windows": false
     ]
@@ -51,6 +51,11 @@ struct Action : Hashable, Encodable, Decodable, Equatable {
     var ccSystemCommand : String = ""
     
     var text : String = ""
+    
+    
+    var textOpacity : Double = 1.0
+    var iconOpacity : Double = 0.5
+    var backgroundOpacity : Double = 1.0
 
     
     
@@ -63,8 +68,8 @@ struct Action : Hashable, Encodable, Decodable, Equatable {
             color: String = "#323232",
             textColor: String = "#FFFFFF",
             foregroundColor: String = "#FFFFFF",
-            modifiers: [String: Bool] = ["Shift": false, "Control": false, "Option": false, "Command": false, "Windows": false],
-         ccModifiers: [String: Bool] = ["Shift": false, "Control": false, "Option": false, "Command": false, "Windows": false],
+            modifiers: [String: Bool] = ["Shift": false, "Control": false, "Alt": false, "Command": false, "Windows": false],
+         ccModifiers: [String: Bool] = ["Shift": false, "Control": false, "Alt": false, "Command": false, "Windows": false],
             uid: String = UUID().uuidString,
             page: Int? = nil,
             nameVisible: Bool = true,
@@ -73,7 +78,7 @@ struct Action : Hashable, Encodable, Decodable, Equatable {
         ccSiriShortcut: String = "",
      systemCommand : String = "",
     ccSystemCommand : String = "",
-            text: String = "", knobSensitivity : Double = 50) {
+         text: String = "", knobSensitivity : Double = 50, textOpacity : Double = 1.0, iconOpacity : Double = 0.5, backgroundOpacity : Double = 1.0) {
            self.icon = icon
            self.name = name
            self.type = type
@@ -95,6 +100,9 @@ struct Action : Hashable, Encodable, Decodable, Equatable {
         self.systemCommand = systemCommand
         self.ccSystemCommand = ccSystemCommand
         self.knobSensitivity = knobSensitivity
+        self.textOpacity = textOpacity
+        self.iconOpacity = iconOpacity
+        self.backgroundOpacity = backgroundOpacity
        }
 
     
@@ -115,16 +123,16 @@ struct Action : Hashable, Encodable, Decodable, Equatable {
             modifiers = try container.decodeIfPresent([String: Bool].self, forKey: .modifiers) ?? [
                 "Shift": false,
                 "Control": false,
-                "Option": false,
+                "Alt": false,
                 "Command": false,
-                "Windows": false
+                "Windows": false,
             ]
         ccModifiers = try container.decodeIfPresent([String: Bool].self, forKey: .ccModifiers) ?? [
             "Shift": false,
             "Control": false,
-            "Option": false,
+            "Alt": false,
             "Command": false,
-            "Windows": false
+            "Windows": false,
         ]
             uid = try container.decodeIfPresent(String.self, forKey: .uid) ?? UUID().uuidString
             page = try container.decodeIfPresent(Int.self, forKey: .page)
@@ -136,24 +144,16 @@ struct Action : Hashable, Encodable, Decodable, Equatable {
             systemCommand = try container.decodeIfPresent(String.self, forKey: .systemCommand) ?? ""
             ccSystemCommand = try container.decodeIfPresent(String.self, forKey: .ccSystemCommand) ?? ""
             knobSensitivity =  try container.decodeIfPresent(Double.self, forKey: .knobSensitivity) ?? 50
+        textOpacity =  try container.decodeIfPresent(Double.self, forKey: .textOpacity) ?? 1
+        iconOpacity =  try container.decodeIfPresent(Double.self, forKey: .iconOpacity) ?? 0.5
+        backgroundOpacity =  try container.decodeIfPresent(Double.self, forKey: .backgroundOpacity) ?? 1
         }
     
     
 }
 
 
-struct ActionPage : Hashable, Encodable, Decodable, Equatable  {
-    static var maxColCount = 4
-    static var maxRowCount = 6
-    var actions: [String?]
-    init() {
-        actions = Array(repeating: nil, count: Self.maxColCount * Self.maxRowCount)
-    }
-    
-    init(actions: [String?]) {
-        self.actions = actions
-    }
-}
+
 
 
 struct FetchActionsResponse: Decodable {
@@ -163,6 +163,7 @@ struct FetchActionsResponse: Decodable {
 
 struct Host : Hashable, Encodable, Decodable {
     var name: String = ""
+    var version: String = ""
     var ip: String = ""
     var code: String = ""
     var isMac : Bool = false
@@ -189,27 +190,27 @@ struct Host : Hashable, Encodable, Decodable {
 }
 
 
-class HostViewModel: ObservableObject {
+class HostViewModel: NSObject, ObservableObject {
     @Published var host: Host
     
     init(host: Host) {
         self.host = host
     }
     
-    var isHostConnected = false 
+    var isHostConnected = false
     
     func fetchActions(completion: (([ActionPage]) -> Void)? = nil) {
         print("++ FETCHING ACTIONS")
-        guard let url = URL(string: "http://\(self.host.ip):\(portUsed)/getActions") else {
+        guard let url = URL(string: "http://\(self.host.ip)/getActions") else {
             print("Invalid URL for getting actions")
             completion?([])
             return
         }
-
+        
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue(self.host.code, forHTTPHeaderField: "code")
-
+        
         let task = URLSession.shared.dataTask(with: request) { [weak self, code = self.host.code] data, response, error in
             DispatchQueue.main.async {
                 if let error = error {
@@ -217,13 +218,13 @@ class HostViewModel: ObservableObject {
                     completion?([])
                     return
                 }
-
+                
                 if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
                     print("HTTP Error: \(httpResponse.statusCode) for code \(code)")
                     completion?([])
                     return
                 }
-
+                
                 if let data = data {
                     do {
                         let decoder = JSONDecoder()
@@ -243,10 +244,10 @@ class HostViewModel: ObservableObject {
                             }
                             return ActionPage(actions: updatedActions)
                         }
-
+                        
                         self?.host.actionPages = serverResponse.layout  // Update the host's actionPages
                         self?.host.actions = serverResponse.actions    // Update the host's actions
-                            
+                        
                         completion?(serverResponse.layout)
                     } catch {
                         print("Error decoding server response: \(error)")
@@ -257,15 +258,15 @@ class HostViewModel: ObservableObject {
                 }
             }
         }
-
+        
         task.resume()
     }
-
-
-
+    
+    
+    
     
     func createAction(action: inout Action, page: Int, completion: ((Result<Void, Error>) -> Void)? = nil) {
-        guard let url = URL(string: "http://\(self.host.ip):\(portUsed)/createAction") else {
+        guard let url = URL(string: "http://\(self.host.ip)/createAction") else {
             print("Invalid URL for creating action")
             return
         }
@@ -306,11 +307,11 @@ class HostViewModel: ObservableObject {
     }
     
     func deleteAction(actionID: String, completion: ((Result<Void, Error>) -> Void)? = nil) {
-        guard let url = URL(string: "http://\(self.host.ip):\(portUsed)/deleteAction") else {
+        guard let url = URL(string: "http://\(self.host.ip)/deleteAction") else {
             completion?(.failure(NSError(domain: "URLConstruction", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL for deleting action"])))
             return
         }
-
+        
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue(self.host.code, forHTTPHeaderField: "code")
@@ -324,28 +325,28 @@ class HostViewModel: ObservableObject {
             completion?(.failure(error))
             return
         }
-
+        
         let task = URLSession.shared.dataTask(with: request) { [code = self.host.code] data, response, error in
             if let error = error {
                 completion?(.failure(error))
                 return
             }
-
+            
             if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
                 completion?(.failure(NSError(domain: "", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: "HTTP Error: \(httpResponse.statusCode) for code \(code)"])))
                 return
             }
-
+            
             completion?(.success(()))
         }
-
+        
         task.resume()
     }
-
-
+    
+    
     
     func updateAction(action: Action, completion: ((Result<Void, Error>) -> Void)? = nil) {
-        guard let url = URL(string: "http://\(self.host.ip):\(portUsed)/updateAction") else {
+        guard let url = URL(string: "http://\(self.host.ip)/updateAction") else {
             return
         }
         
@@ -382,11 +383,11 @@ class HostViewModel: ObservableObject {
     
     
     func runAction(actionID: String, direction: String = "clockwise", completion: ((Result<Void, Error>) -> Void)? = nil) {
-        guard let url = URL(string: "http://\(self.host.ip):\(portUsed)/runAction") else {
+        guard let url = URL(string: "http://\(self.host.ip)/runAction") else {
             completion?(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
             return
         }
-
+        
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue(self.host.code, forHTTPHeaderField: "code")
@@ -399,35 +400,72 @@ class HostViewModel: ObservableObject {
             completion?(.failure(error))
             return
         }
-
+        
         let task = URLSession.shared.dataTask(with: request) { [code = self.host.code] data, response, error in
             if let error = error {
                 completion?(.failure(error))
                 return
             }
-
+            
             if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
                 completion?(.failure(NSError(domain: "", code: httpResponse.statusCode, userInfo: nil)))
                 return
             }
-
+            
             completion?(.success(()))
         }
-
+        
         task.resume()
     }
-
-    func swapActions(source : String, target: (page: Int, index: Int), completion: ((Result<Void, Error>) -> Void)? = nil) {
-        guard let url = URL(string: "http://\(self.host.ip):\(portUsed)/swapActions") else {
+    
+    
+    func resizeAction(actionID: String, newSize: Int = 1, pageNum : Int,  completion: ((Result<Void, Error>) -> Void)? = nil) {
+        guard let url = URL(string: "http://\(self.host.ip)/resizeAction") else {
             completion?(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
             return
         }
-
+        
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue(self.host.code, forHTTPHeaderField: "code")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
+        
+        let jsonBody = ["actionID": actionID, "newSize": newSize, "pageNum": pageNum] as [String : Any]
+        do {
+            request.httpBody = try JSONSerialization.data(withJSONObject: jsonBody, options: [])
+        } catch {
+            completion?(.failure(error))
+            return
+        }
+        
+        let task = URLSession.shared.dataTask(with: request) { [code = self.host.code] data, response, error in
+            if let error = error {
+                completion?(.failure(error))
+                return
+            }
+            
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
+                completion?(.failure(NSError(domain: "", code: httpResponse.statusCode, userInfo: nil)))
+                return
+            }
+            
+            completion?(.success(()))
+        }
+        
+        task.resume()
+    }
+    
+    func swapActions(source : String, target: (page: Int, index: Int), completion: ((Result<Void, Error>) -> Void)? = nil) {
+        guard let url = URL(string: "http://\(self.host.ip)/swapActions") else {
+            completion?(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue(self.host.code, forHTTPHeaderField: "code")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
         let jsonBody: [String: Any] = [
             "source": source,
             "targetPage": 0,
@@ -440,26 +478,26 @@ class HostViewModel: ObservableObject {
             completion?(.failure(error))
             return
         }
-
+        
         let task = URLSession.shared.dataTask(with: request) { [code = self.host.code] data, response, error in
             if let error = error {
                 completion?(.failure(error))
                 
                 return
             }
-
+            
             if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
                 completion?(.failure(NSError(domain: "", code: httpResponse.statusCode, userInfo: nil)))
                 print("HERE")
                 print(httpResponse.statusCode)
                 return
             }
-
+            
             completion?(.success(()))
         }
         
         
-
+        
         task.resume()
     }
     
@@ -467,15 +505,15 @@ class HostViewModel: ObservableObject {
     
     func getSiriShortcuts(completion: ((Result<Void, Error>, [String]) -> Void)? = nil) {
         print("++ FETCHING SIRI SHORTCUTS")
-        guard let url = URL(string: "http://\(self.host.ip):\(portUsed)/getSiriShortcuts") else {
+        guard let url = URL(string: "http://\(self.host.ip)/getSiriShortcuts") else {
             completion?(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])), [])
             return
         }
-
+        
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue(self.host.code, forHTTPHeaderField: "code")
-
+        
         let task = URLSession.shared.dataTask(with: request) { [code = self.host.code] data, response, error in
             if let error = error {
                 completion?(.failure(error), [])
@@ -489,13 +527,13 @@ class HostViewModel: ObservableObject {
             
             
             if let data = data {
-                    do {
-                        let decoder = JSONDecoder()
-                        let receivedShortcuts = try decoder.decode([String].self, from: data)
-                        print("Successfully retrieved siri shortcuts")
-                        completion?(.success(()),receivedShortcuts)
-                    } catch {
-                        print("Error decoding Actions: \(error)")
+                do {
+                    let decoder = JSONDecoder()
+                    let receivedShortcuts = try decoder.decode([String].self, from: data)
+                    print("Successfully retrieved siri shortcuts")
+                    completion?(.success(()),receivedShortcuts)
+                } catch {
+                    print("Error decoding Actions: \(error)")
                 }
                 
             }
@@ -506,15 +544,15 @@ class HostViewModel: ObservableObject {
     
     func getSystemCommands(completion: ((Result<Void, Error>, [String]) -> Void)? = nil) {
         print("++ FETCHING SYSTEM COMMANDS")
-        guard let url = URL(string: "http://\(self.host.ip):\(portUsed)/getSystemCommands") else {
+        guard let url = URL(string: "http://\(self.host.ip)/getSystemCommands") else {
             completion?(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])), [])
             return
         }
-
+        
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue(self.host.code, forHTTPHeaderField: "code")
-
+        
         let task = URLSession.shared.dataTask(with: request) { [code = self.host.code] data, response, error in
             if let error = error {
                 completion?(.failure(error), [])
@@ -528,18 +566,20 @@ class HostViewModel: ObservableObject {
             
             
             if let data = data {
-                    do {
-                        let decoder = JSONDecoder()
-                        let receivedSystemCommands = try decoder.decode([String].self, from: data)
-                        print("Successfully retrieved system commands")
-                        completion?(.success(()),receivedSystemCommands)
-                    } catch {
-                        print("Error decoding Actions: \(error)")
+                do {
+                    let decoder = JSONDecoder()
+                    let receivedSystemCommands = try decoder.decode([String].self, from: data)
+                    print("Successfully retrieved system commands")
+                    completion?(.success(()),receivedSystemCommands)
+                } catch {
+                    print("Error decoding Actions: \(error)")
                 }
                 
             }
         }
         task.resume()
     }
-
+    
+    
 }
+    

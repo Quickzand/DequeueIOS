@@ -1,19 +1,13 @@
 //
-//  AlternativeActionButtonView.swift
+//  ActionToggleView.swift
 //  Dequeue
 //
-//  Created by Matthew Sand on 12/20/23.
+//  Created by Matthew Sand on 1/21/24.
 //
 
 import SwiftUI
 
-
-
-
-
-
-
-struct AlternativeActionButtonView: View {
+struct ActionToggleView: View {
     @State var action: Action
     @EnvironmentObject var appState: AppState
     @State private var isLoading: Bool = false
@@ -60,16 +54,9 @@ struct AlternativeActionButtonView: View {
                             .frame(width:60, height:60)
                             .opacity(action.iconVisible ? action.iconOpacity : 0)
                             .foregroundStyle(Color(hex: action.foregroundColor))
-                        VStack {
-                            if action.iconVisible {
-                                Spacer()
-                            }
-                            Text(action.name)
-                                .opacity(action.nameVisible ? action.textOpacity : 0)
-                                .foregroundStyle(Color(hex: action.textColor))
-                                .font(.system(size: 10, weight: .bold))
-                                .padding(.all, 5)
-                        }
+                        Text(action.name)
+                            .opacity(action.nameVisible ? action.textOpacity : 0)
+                            .foregroundStyle(Color(hex: action.textColor))
                         
                         // Additional Views
                         if isLoading {
@@ -83,11 +70,17 @@ struct AlternativeActionButtonView: View {
                         }
                     }
                     .frame(width: 90, height: 90)
-                    .background(Color(hex: action.color).opacity(action.backgroundOpacity))
-                    .onAppear {
-                        print(action.backgroundOpacity)
-                    }
-                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                    .background(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(.white.opacity(0.5), lineWidth: 5)
+                            .fill(
+                                
+                                
+                            )
+                            .foregroundColor(Color(hex: action.color).opacity(action.backgroundOpacity))
+                            
+                    )
+                    
                     if(editMode) {
                         Button {
                             showAlert = true
@@ -117,5 +110,5 @@ struct AlternativeActionButtonView: View {
 
 
 #Preview {
-    ActionSlot(action: Action(displayType: "button", text: "TEST"), editMode: .constant(false), needsUpdate: .constant(false), isResizeOccuring: .constant(false), resizingIndex: .constant(0), index:0).environmentObject(AppState());
+    ActionSlot(action: Action(displayType: "toggle"), editMode: .constant(false), needsUpdate: .constant(false), isResizeOccuring: .constant(false), resizingIndex: .constant(0), index:0).environmentObject(AppState());
 }

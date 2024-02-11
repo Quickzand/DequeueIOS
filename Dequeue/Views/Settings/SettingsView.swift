@@ -12,9 +12,39 @@ struct SettingsView: View {
     @State var showConnectToHostView : Bool = false
     @State var isFeedbackAlertPresented : Bool = false
     
+    var HostInformation : some View {
+        VStack {
+            Text("Connected Host Info")
+                .font(.headline)
+            HStack {
+                Text("Name:")
+                Spacer()
+                Text(appState.connectedHost.host.sanitizedName())
+            }
+            HStack {
+                Text("Gizmo Version:")
+                Spacer()
+                Text(appState.connectedHost.host.version)
+            }
+            HStack {
+                Text("IP:")
+                Spacer()
+                Text(appState.connectedHost.host.ip)
+            }
+        }
+        .frame(maxWidth:.infinity)
+        .padding()
+        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 20))
+        .padding()
+    }
+    
+    
+    
     var body: some View {
         ScrollView([.vertical]) {
-            SettingsItemView(title: "Connect To Host", iconName: "wifi", action: {
+            HostInformation
+            
+            SettingsItemView(title: "Connect To New Host", iconName: "wifi", action: {
                 showConnectToHostView = true
             }, showArrow: true)
                 .navigationDestination(isPresented: $showConnectToHostView) {
@@ -33,6 +63,13 @@ struct SettingsView: View {
             SettingsBackgroundsListView()
             
             SettingsItemToggleView(title: "Haptic Feedback", iconName: "", toggle: $appState.settings.hapticFeedbackEnabled)
+            
+            
+            if let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String {
+                Text("Version " + version)
+            }
+            
+            
         }
     }
 }
@@ -64,7 +101,7 @@ struct SettingsItemView : View {
             .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 15))
             .padding()
         }
-        .foregroundColor(.white)
+        .foregroundColor(.primary)
     }
 }
 
@@ -96,7 +133,7 @@ struct SettingsItemToggleView : View  {
             .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 15))
             .padding()
         }
-        .foregroundColor(.white)
+        .foregroundColor(.primary)
     }
 }
 
@@ -127,7 +164,7 @@ struct SettingsBackgroundsListView : View {
     
     @State private var backgrounds : [Background] = [Background(name: "Grid", color1: colorToHex(Color("AccentColor")), color2: colorToHex(Color(hex:"#0000000")))]
     @State private var isSelected : Bool = false
-    @State private var selectedColor : Color = Color("Accent")
+    @State private var selectedColor : Color = Color("AccentColor")
     
     @EnvironmentObject var appState : AppState
     

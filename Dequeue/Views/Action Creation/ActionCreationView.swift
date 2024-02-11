@@ -71,9 +71,6 @@ struct ActionCreationView: View {
     @State private var pickerSelection : String = "functionality"
     
     
-    @State private var selectedDisplayType : String = "button"
-    
-    
     @Binding var needsUpdate : Bool
     
     func colorToHex(_ color: Color) -> String {
@@ -88,6 +85,52 @@ struct ActionCreationView: View {
         return String(format: "#%02X%02X%02X", Int(red * 255), Int(green * 255), Int(blue * 255))
     }
     
+    
+    var ToggleDisplayView : some View {
+        VStack {
+            Text("Toggle")
+                .font(.system(size:30, weight: .bold))
+                .foregroundColor(.primary)
+                .padding(.top)
+            ZStack {
+                Image(systemName: newAction.icon)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .opacity(newAction.iconVisible ? newAction.iconOpacity : 0)
+                    .foregroundColor(Color(hex:newAction.foregroundColor))
+                Text(newAction.name)
+                    .foregroundStyle(Color(hex: newAction.textColor))
+                    .font(.system(size: 24, weight:.bold))
+                    .opacity(newAction.nameVisible ? newAction.textOpacity : 0)
+            }
+            .frame(width: 180, height: 180)
+            .padding()
+            .overlay(
+//                LinearGradient(
+//                     gradient: Gradient(stops: [
+//                         .init(color: Color.black.opacity(0.25), location: 0),
+//                         .init(color: Color.black.opacity(0.25), location: 0.5),
+//                         .init(color: .clear, location: 0.5),
+//                         .init(color: .clear, location: 1)
+//                     ]),
+//                     startPoint: .top,
+//                     endPoint: .bottom
+//                 )
+//                .rotationEffect(Angle(degrees: 0.0))
+                EmptyView()
+            )
+            .background(
+                RoundedRectangle(cornerRadius: 40)
+                    .fill(
+                        .shadow(.inner(color:.white.opacity(0.15), radius: 5))
+                    )
+                    .foregroundStyle(Color(hex: newAction.color).opacity(newAction.backgroundOpacity))
+            )
+        }
+        
+    }
+    
+    
     var KnobDisplayView : some View {
         VStack {
             Text("Knob")
@@ -97,8 +140,8 @@ struct ActionCreationView: View {
             ZStack {
                 ZStack {
                     Circle()
-                        .frame(width: 160, height: 160)
-                        .foregroundColor(Color(hex:newAction.color))
+                        .frame(width: .infinity, height: .infinity)
+                        .foregroundColor(Color(hex:newAction.color).opacity(newAction.backgroundOpacity))
                     RoundedRectangle(cornerRadius:50.0 )
                         .frame(width: 4, height:40)
                         .foregroundColor(.black)
@@ -106,14 +149,14 @@ struct ActionCreationView: View {
                 }
                 Image(systemName: newAction.icon)
                     .resizable()
-                    .frame(maxWidth:100, maxHeight:100)
-                    .aspectRatio(contentMode: .fit)
-                    .opacity(newAction.iconVisible ? 0.25 : 0)
+                    .frame(width:100, height:100)
+                    .aspectRatio(contentMode: .fill)
+                    .opacity(newAction.iconVisible ? newAction.iconOpacity : 0)
                     .foregroundColor(Color(hex:newAction.foregroundColor))
                 Text(newAction.name)
                     .foregroundColor(Color(hex:newAction.textColor))
                     .font(.system(size: 20, weight:.bold))
-                    .opacity(newAction.nameVisible ? 1 : 0)
+                    .opacity(newAction.nameVisible ? newAction.textOpacity : 0)
                     .padding(.bottom, 5)
             }
             .frame(width: 180, height: 180)
@@ -133,15 +176,16 @@ struct ActionCreationView: View {
                 Image(systemName: newAction.icon)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .opacity(newAction.iconVisible ? 0.25 : 0)
+                    .opacity(newAction.iconVisible ? newAction.iconOpacity : 0)
                     .foregroundColor(Color(hex:newAction.foregroundColor))
                 Text(newAction.name)
                     .foregroundStyle(Color(hex: newAction.textColor))
                     .font(.system(size: 24, weight:.bold))
-                    .opacity(newAction.nameVisible ? 1 : 0)
+                    .opacity(newAction.nameVisible ? newAction.textOpacity : 0)
             }
             .frame(width: 180, height: 180)
-            .background(Color(hex: newAction.color))
+            .padding()
+            .background(Color(hex: newAction.color).opacity(newAction.backgroundOpacity))
             .clipShape(RoundedRectangle(cornerRadius: 40))
         }
     }
@@ -174,11 +218,12 @@ struct ActionCreationView: View {
                 Text("Text Color:")
                     .font(.system(size: 20, weight:.bold))
                 Spacer()
-                ColorPicker("", selection: $selectedTextColor, supportsOpacity: false)
+                ColorPicker("", selection: $selectedTextColor, supportsOpacity: true)
                     .labelsHidden()
                     .scaleEffect(1.5)
                     .frame(width:55, height: 55)
                     .onChange(of:selectedTextColor) {
+                        newAction.textOpacity = selectedTextColor.opacityValue
                         newAction.textColor = colorToHex(selectedTextColor)
                     }
             }.padding(.top)
@@ -186,11 +231,12 @@ struct ActionCreationView: View {
                 Text("Icon Color:")
                     .font(.system(size: 20, weight:.bold))
                 Spacer()
-                ColorPicker("", selection: $selectedForegroundColor, supportsOpacity: false)
+                ColorPicker("", selection: $selectedForegroundColor, supportsOpacity: true)
                     .labelsHidden()
                     .scaleEffect(1.5)
                     .frame(width:55, height: 55)
                     .onChange(of:selectedForegroundColor) {
+                        newAction.iconOpacity = selectedForegroundColor.opacityValue
                         newAction.foregroundColor = colorToHex(selectedForegroundColor)
                     }
             }.padding(.top)
@@ -198,11 +244,13 @@ struct ActionCreationView: View {
                 Text("Background Color:")
                     .font(.system(size: 20, weight:.bold))
                 Spacer()
-                ColorPicker("", selection: $selectedBackgroundColor, supportsOpacity: false)
+                ColorPicker("", selection: $selectedBackgroundColor, supportsOpacity: true)
                     .labelsHidden()
                     .scaleEffect(1.5)
                     .frame(width:55, height: 55)
                     .onChange(of:selectedBackgroundColor) {
+                        newAction.backgroundOpacity = selectedBackgroundColor.opacityValue
+                        print(newAction.backgroundOpacity)
                         newAction.color = colorToHex(selectedBackgroundColor)
                     }
             }.padding(.top)
@@ -248,17 +296,7 @@ struct ActionCreationView: View {
                     }
                 }
                 ScrollView([.horizontal]) {
-                    HStack {
-                        Spacer()
-                        ActionTypeButtonView(associatedAction: "shortcut", selectedActionType: $newAction.type)
-                        Spacer()
-                        ActionTypeButtonView(associatedAction: "siriShortcut", selectedActionType: $newAction.type)
-                        Spacer()
-                        ActionTypeButtonView(associatedAction: "systemCommand", selectedActionType: $newAction.type)
-                        Spacer()
-                        ActionTypeButtonView(associatedAction: "text", selectedActionType: $newAction.type)
-                        Spacer()
-                    }
+                    getActionTypeOptions()
                 }
                 switch newAction.type {
                 case "shortcut":
@@ -276,6 +314,35 @@ struct ActionCreationView: View {
             .padding(.bottom, isKeyboardVisible ? 300 : 0)
         }.frame(minHeight: isKeyboardVisible ? 500 : 0)
             .padding(.bottom, isKeyboardVisible ? 200 : 0)
+    }
+    
+    @ViewBuilder
+    func getActionTypeOptions() -> some View {
+        switch newAction.displayType {
+        case "toggle":
+             HStack {
+                Spacer()
+                ActionTypeButtonView(associatedAction: "shortcut", selectedActionType: $newAction.type)
+                Spacer()
+                ActionTypeButtonView(associatedAction: "systemCommand", selectedActionType: $newAction.type)
+                Spacer()
+            }
+             .onAppear {
+                 newAction.type = "shortcut"
+             }
+        default:
+             HStack {
+                Spacer()
+                ActionTypeButtonView(associatedAction: "shortcut", selectedActionType: $newAction.type)
+                Spacer()
+                ActionTypeButtonView(associatedAction: "siriShortcut", selectedActionType: $newAction.type)
+                Spacer()
+                ActionTypeButtonView(associatedAction: "systemCommand", selectedActionType: $newAction.type)
+                Spacer()
+                ActionTypeButtonView(associatedAction: "text", selectedActionType: $newAction.type)
+                Spacer()
+            }
+        }
     }
     
     
@@ -421,6 +488,8 @@ struct ActionCreationView: View {
                 Spacer()
                 ModifierButton(icon: "shift", modifierName: "Shift", modifiers: $newAction.modifiers)
                 Spacer()
+                ModifierButton(icon: "option", modifierName: "Alt", modifiers: $newAction.modifiers)
+                Spacer()
             }
             
             if(newAction.displayType == "knob") {
@@ -447,6 +516,8 @@ struct ActionCreationView: View {
                     ModifierButton(icon: "control", modifierName: "Control", modifiers: $newAction.ccModifiers)
                     Spacer()
                     ModifierButton(icon: "shift", modifierName: "Shift", modifiers: $newAction.ccModifiers)
+                    Spacer()
+                    ModifierButton(icon: "option", modifierName: "Alt", modifiers: $newAction.modifiers)
                     Spacer()
                 }
             }
@@ -483,6 +554,10 @@ struct ActionCreationView: View {
                         KnobDisplayView
                         Spacer()
                     }.tag("knob")
+                    VStack {
+                        ToggleDisplayView
+                        Spacer()
+                    }.tag("toggle")
                 }
                 .tabViewStyle(.page(indexDisplayMode: .always))
                 .indexViewStyle(.page(backgroundDisplayMode: .automatic))
@@ -501,7 +576,7 @@ struct ActionCreationView: View {
                     .tabViewStyle(.page(indexDisplayMode: .never))
                     
                 }
-                .frame(maxWidth:.infinity, maxHeight:.infinity).padding(.horizontal).background(.thinMaterial)
+                .frame(maxWidth:.infinity, maxHeight:.infinity).background(.thinMaterial)
                 
             }
             .iconPicker(
@@ -520,6 +595,11 @@ struct ActionCreationView: View {
                 if let editingAction = editingAction {
                     self.newAction = editingAction
                 }
+                
+                selectedTextColor = Color(hex:newAction.textColor).opacity(newAction.textOpacity)
+                selectedBackgroundColor = Color(hex:newAction.color).opacity(newAction.backgroundOpacity)
+                selectedForegroundColor = Color(hex:newAction.color).opacity(newAction.iconOpacity)
+                
             }
             .toolbar {
                 ToolbarItem {
@@ -616,29 +696,6 @@ struct ActionTypeButtonView : View {
     }
 }
 
-struct ModifierSelectionView : View  {
-
-    @Binding var modifiers : [String: Bool]
-    @EnvironmentObject var appState : AppState
-    
-    
-    
-    var body : some View {
-        HStack {
-            Spacer()
-            if(appState.connectedHost.host.isMac) {
-                ModifierButton(icon: "command", modifierName: "Command", modifiers: $modifiers)
-            } else {
-                ModifierButton(icon: "squareshape.split.2x2", modifierName: "Windows", modifiers: $modifiers)
-            }
-            Spacer()
-            ModifierButton(icon: "control", modifierName: "Control", modifiers: $modifiers)
-            Spacer()
-            ModifierButton(icon: "shift", modifierName: "Shift", modifiers: $modifiers)
-            Spacer()
-        }
-    }
-}
 
 struct ModifierButton : View {
     var icon : String
@@ -646,7 +703,11 @@ struct ModifierButton : View {
     @Binding var modifiers : [String: Bool]
     
     func isSelected() -> Bool {
-        return modifiers[modifierName]!
+        if let selected = modifiers[modifierName] {
+             return selected
+         } else {
+             return false
+         }
     }
     
     var body : some View {

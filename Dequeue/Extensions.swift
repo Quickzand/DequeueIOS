@@ -35,6 +35,11 @@ extension Color {
             opacity: Double(a) / 255
         )
     }
+    
+    var opacityValue: Double {
+        guard let components = UIColor(self).cgColor.components else { return 1.0 }
+        return components[3] // Assuming component at index 3 is alpha
+    }
 }
 
 

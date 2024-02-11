@@ -24,7 +24,7 @@ struct QRCodeScannerView: View {
                         var devices = getDevices() ?? []
                         devices.append(host)
                         saveDevices(devices)
-                        connectToHost(host:host, appState: appState)
+                        appState.serviceBrowser?.connectToHost(host: host)
                         print("Code: \(decodedData.code), IP: \(decodedData.ip)")
                         // Handle the decoded data as needed
                     } catch {

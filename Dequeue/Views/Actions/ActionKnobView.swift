@@ -14,6 +14,7 @@ struct ActionKnobView: View {
     @State private var isError: Bool = false
     @Binding var editMode: Bool
     @State private var showAlert = false
+    var scaleFactor : CGFloat
     @Binding var needsUpdate: Bool
     @State private var rotation: Angle = .zero
        @State private var lastRotation: Angle = .zero
@@ -47,9 +48,21 @@ struct ActionKnobView: View {
         let currentDragAngle = Angle(radians: atan2(dragVector.dy, dragVector.dx))
 
         // Check if the movement resembles a circular motion
-        if isCircularMotion(gesture: gesture, center: center) {
-            let deltaRotation = currentDragAngle - lastRotation
+        if true {
+            // Immediate change in angle
+                let deltaRotation = currentDragAngle - lastRotation
             var newRotation = rotation + deltaRotation
+                // Determine the direction of rotation
+                let direction = deltaRotation.degrees >= 0 ? "clockwise" : "counterclockwise"
+
+
+                // Normalize the new rotation angle
+                newRotation = Angle(degrees: (newRotation.degrees).truncatingRemainder(dividingBy: 360))
+
+                // Your snap logic and other code
+
+                // Update lastRotation to the current drag angle for the next call
+                lastRotation = currentDragAngle
 
             // Normalize the new rotation angle
             newRotation = Angle(degrees: (newRotation.degrees).truncatingRemainder(dividingBy: 360))
@@ -63,8 +76,6 @@ struct ActionKnobView: View {
                 rotation = snapRotation
                 lastSnapRotation = snapRotation
                 lastRotation = currentDragAngle // Update lastRotation to the current drag angle
-
-                let direction = (snap > lastRotation.degrees) ? "clockwise" : "counterclockwise"
 
                 // Execute the snap action
                 onSnap(direction)
@@ -155,7 +166,7 @@ struct ActionKnobView: View {
             ZStack {
                 Circle()
                     .frame(width: 90, height: 90)
-                    .foregroundColor(Color(hex:action.color))
+                    .foregroundColor(Color(hex:action.color).opacity(action.backgroundOpacity))
                 RoundedRectangle(cornerRadius:25.0 )
                     .frame(width: 2, height:20)
                     .foregroundColor(.black)
@@ -165,12 +176,12 @@ struct ActionKnobView: View {
                 .resizable()
                 .frame(maxWidth:50, maxHeight:50)
                 .aspectRatio(contentMode: .fit)
-                .opacity(action.iconVisible ? 0.25 : 0)
-                .foregroundColor(.black)
+                .opacity(action.iconVisible ? action.iconOpacity : 0)
+                .foregroundColor(Color(hex:action.foregroundColor))
             Text(action.name)
                 .foregroundColor(Color(hex:action.foregroundColor))
                 .font(.system(size: 12, weight:.bold))
-                .opacity(action.nameVisible ? 1 : 0)
+                .opacity(action.nameVisible ? action.textOpacity : 0)
                 .padding(.bottom, 5)
         }
     }
@@ -194,6 +205,11 @@ struct ActionKnobView: View {
             case .success:
                 // Handle success
                 print("Action successful")
+                appState.connectedHost.fetchActions()
+                {newLayout in
+                    print(newLayout)
+                    needsUpdate = true
+                }
             case .failure(let error):
                 isError = true
                 print("Error occurred: \(error.localizedDescription)")

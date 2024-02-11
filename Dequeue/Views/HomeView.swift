@@ -91,8 +91,8 @@ struct ActionPageView : View {
     @State private var isResizeOccuring = false
     @State private var resizingIndex = 0
     
-    @State private var buttonScale = 1.0
-    @State private var buttonOpacity = 1.0
+    @State private var buttonScale = 1.5
+    @State private var buttonOpacity = 0.0
     var gridLayout = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
     var body: some View {
         VStack (alignment:.leading){
@@ -100,9 +100,13 @@ struct ActionPageView : View {
             LazyVGrid(columns: gridLayout, spacing: 10) {
                 ForEach(0..<actionsLayout.count, id: \.self) {index in
                     VStack {
-                        ActionSlot(action: appState.connectedHost.host.actions[actionsLayout[index] ?? "NOT AN ACTION"], editMode: $editMode, needsUpdate: $needsUpdate, isResizeOccuring: $isResizeOccuring, resizingIndex: $resizingIndex, index: index)
+                        ActionSlot(action: appState.connectedHost.host.actions[actionsLayout[index] ?? ""], editMode: $editMode, pageNum: pageNum , needsUpdate: $needsUpdate, size: calculateActionSize(actionID: actionsLayout[index] ?? ""), isHidden: !isFirstOccurrenceOfAction(at: index), isResizeOccuring: $isResizeOccuring,
+                                   resizingIndex: $resizingIndex, index: index)
+                            .opacity(buttonOpacity)
+                            .scaleEffect(buttonScale)
                     }
-                    //                            .animation(Animation.spring().delay(0.15 * Double(calcDistance(col: colNum, row: indexedAction.index, origin: (col:2, row:3))))) // Adjust the animation as needed
+                    .animation(Animation.spring(.bouncy).delay(0.15 * Double(index/15)), value: buttonScale)
+                    // Adjust the animation as needed
                     .opacity(buttonOpacity)
                     .scaleEffect(buttonScale)
                     .onAppear {
@@ -113,13 +117,30 @@ struct ActionPageView : View {
                     
                 }
             }
-            
         }
     }
+    
+    func calculateActionSize(actionID: String) -> Int {
+        if actionID == ""
+            {
+                return 1
+            }
+        var occuranceCount = actionsLayout.filter{$0 == actionID}.count
+        var size = Int(sqrt(Double(occuranceCount)))
+        return size
+    }
+    
+    func isFirstOccurrenceOfAction(at index: Int) -> Bool {
+           guard let actionID = actionsLayout[index], index > 0 else { return true }
+           return !actionsLayout[0..<index].contains(actionID)
+       }
 }
 
 
-func calcDistance(col: Int, row: Int, origin: (col: Int, row: Int)) -> Int {
+
+
+
+func  calcDistance(col: Int, row: Int, origin: (col: Int, row: Int)) -> Int {
     let deltaX = col - origin.col
     let deltaY = row - origin.row
     let distance = sqrt(Double(deltaX * deltaX + deltaY * deltaY))
@@ -127,14 +148,11 @@ func calcDistance(col: Int, row: Int, origin: (col: Int, row: Int)) -> Int {
 }
 
 
-struct HomeView_Previews: PreviewProvider {
-    static var previews: some View {
-        
-        HomeView().environmentObject({
-            () -> AppState in
-            let envObject = AppState()
-            envObject.connectedHost =  HostViewModel(host: Host(name: "MatbbokPro", ip: "Test", code: "1122"))
-            return envObject
-        }())
-    }
+#Preview {
+    ActionPageView(editMode: .constant(false), pageNum: 0, actionsLayout: ["akar'kjt;kl"], needsUpdate: .constant(false)).environmentObject({
+                    () -> AppState in
+                    let envObject = AppState()
+                    envObject.connectedHost =  HostViewModel(host: Host(name: "MatbbokPro", ip: "Test", code: "1122"))
+                    return envObject
+                }())
 }

@@ -13,7 +13,7 @@ import UIKit
 
 struct OnboardingView: View {
     @State var hideContinue = true
-    @State var currentPage : Int = 2
+    @State var currentPage : Int = 0
     @EnvironmentObject var appState : AppState
     
     var body: some View {

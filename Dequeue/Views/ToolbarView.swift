@@ -26,6 +26,7 @@ struct ToolbarView: View {
                         .foregroundColor(.white)
                         .padding(.horizontal)
                 }
+                .rotationEffect(appState.getCorrectedRotationAngle())
                 
                 Spacer()
       
@@ -41,6 +42,7 @@ struct ToolbarView: View {
                         .font(.system(size:30, weight: .bold))
                         .foregroundColor(.white)
                 }
+                .rotationEffect(appState.getCorrectedRotationAngle())
                 Spacer()
                 
                 Button {
@@ -55,6 +57,7 @@ struct ToolbarView: View {
                         .foregroundColor(.white)
                         .padding(.horizontal)
                 }
+                .rotationEffect(appState.getCorrectedRotationAngle())
                 
             }
     }

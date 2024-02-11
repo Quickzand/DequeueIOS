@@ -23,8 +23,6 @@ struct ConnectToHostView: View {
                 VStack {
                     Button(action: {
                         print("++ Starting scan for devices on local network...")
-                        appState.connectedHost.isHostConnected = false
-                        appState.startScan()
                     })
                     {
                         Text("Refresh")
@@ -64,13 +62,6 @@ struct ConnectToHostView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color.clear)
-            .onAppear() {
-                print("++ Starting scan for devices on local network...")
-                appState.startScan()
-            }
-            .onDisappear {
-                appState.stopScan()
-            }
             
         }
             
@@ -99,7 +90,7 @@ struct HostConnectionScreenView: View {
                .background(Color.clear)
                .onAppear() {
                    if let savedHost = checkForSavedHost(host: host) {
-                       connectToHost(host: savedHost, appState: appState, alreadySaved: true)
+                       appState.serviceBrowser?.connectToHost(host: savedHost, alreadySaved: true)
                    }
                }
            }
@@ -139,7 +130,7 @@ struct BottomConnectButton : View {
         Button(action: {
             let code : String = digits[0] + digits[1] + digits[2] + digits[3]
             host.code = code
-            connectToHost(host: host, appState: appState)
+            appState.serviceBrowser?.connectToHost(host: host)
         }) {
             Text("Connect")
                 .frame(maxWidth: .infinity)
@@ -207,11 +198,6 @@ struct DetectedHostsListView: View {
                 }
             }
             .padding(.horizontal)
-            .refreshable {
-                print("++ Starting scan for devices on local network...")
-                appState.connectedHost.isHostConnected = false
-                appState.startScan()
-            }
         }
     
 }
