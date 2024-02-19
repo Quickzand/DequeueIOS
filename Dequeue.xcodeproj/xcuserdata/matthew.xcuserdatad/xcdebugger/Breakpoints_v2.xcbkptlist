@@ -94,8 +94,8 @@
             filePath = "Dequeue/HostScanning.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "29"
-            endingLineNumber = "29"
+            startingLineNumber = "30"
+            endingLineNumber = "30"
             landmarkName = "isPortOpen(host:port:timeout:completion:)"
             landmarkType = "9">
             <Locations>
@@ -127,6 +127,54 @@
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "27"
                   endingLineNumber = "27"
+                  offsetFromSymbolStart = "636">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F8F19EA5-ADD9-490C-9AEE-1AB27ED80F51"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Dequeue/HostScanning.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "84"
+            endingLineNumber = "84"
+            landmarkName = "checkForSavedHost(host:)"
+            landmarkType = "9">
+            <Locations>
+               <Location
+                  uuid = "F8F19EA5-ADD9-490C-9AEE-1AB27ED80F51 - 445503b736cf2f24"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Dequeue.checkForSavedHost(host: Dequeue.Host) -&gt; Swift.Optional&lt;Dequeue.Host&gt;"
+                  moduleName = "Dequeue"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/matthew/Desktop/Coding/Gizmo/Dequeue/HostScanning.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "85"
+                  endingLineNumber = "85"
+                  offsetFromSymbolStart = "220">
+               </Location>
+               <Location
+                  uuid = "F8F19EA5-ADD9-490C-9AEE-1AB27ED80F51 - 445503b736cf2f24"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Dequeue.checkForSavedHost(host: Dequeue.Host) -&gt; Swift.Optional&lt;Dequeue.Host&gt;"
+                  moduleName = "Dequeue"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/matthew/Desktop/Coding/Gizmo/Dequeue/HostScanning.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "85"
+                  endingLineNumber = "85"
                   offsetFromSymbolStart = "636">
                </Location>
             </Locations>

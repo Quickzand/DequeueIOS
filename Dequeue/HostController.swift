@@ -163,6 +163,7 @@ struct FetchActionsResponse: Decodable {
 
 struct Host : Hashable, Encodable, Decodable {
     var name: String = ""
+    var computerID: String = ""
     var version: String = ""
     var ip: String = ""
     var code: String = ""

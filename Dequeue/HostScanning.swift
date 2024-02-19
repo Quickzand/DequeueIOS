@@ -16,6 +16,7 @@ let portUsed : Int = 2326
 struct DeviceInfoResponse: Decodable {
     let name: String
     let version: String
+    let computerID: String
 }
 
 
@@ -75,20 +76,22 @@ func isPortOpen(host: String, port: Int, timeout: TimeInterval, completion: @esc
 
 func checkForSavedHost(host: Host) -> Host? {
     // Retrieve the saved hosts using the getDevices() function
-    guard let savedHosts = getDevices() else {
+    guard var savedHosts = getDevices() else {
         print("No saved hosts found.")
         return nil
     }
     
     // Check if any of the saved hosts have the same IP as the given host
     for savedHost in savedHosts {
-        if savedHost.ip == host.ip {
-            print("Found saved host with IP: \(savedHost.ip) and code: \(savedHost.code)")
-            return savedHost
+        if savedHost.computerID == host.computerID {
+            print("Found saved host with ID: \(savedHost.computerID) and code: \(savedHost.code)")
+            var temp = (savedHost)
+            temp.ip = host.ip
+            return temp
         }
     }
     
-    print("No saved host found with IP: \(host.ip)")
+    print("No saved host found with ID: \(host.computerID)")
     return nil
 }
 
@@ -175,10 +178,10 @@ class ServiceBrowser {
                         if components.count == 2 {
                             let ip = String(components[0]).replacingOccurrences(of: "%en0", with: "")
                             let port = String(components[1])
-                            self.getHostInfo(ip: ip, port: port, timeout: 5.0) {(isOpen: Bool, name: String, version: String, ip: String) in
+                            self.getHostInfo(ip: ip, port: port, timeout: 5.0) {(isOpen: Bool, name: String, version: String, computerID: String, ip: String) in
                                 
                                 if isOpen {
-                                    var host = Host(name: name, ip: "\(ip):\(port)", code: "")
+                                    var host = Host(name: name, computerID: computerID, ip: "\(ip):\(port)", code: "")
                                     if let savedHost = checkForSavedHost(host: host) {
                                         self.connectToHost(host: savedHost, alreadySaved: true)
                                     }
@@ -213,11 +216,11 @@ class ServiceBrowser {
     
     // MARK: - All logic to connect to host
     
-    func getHostInfo(ip: String, port: String, timeout: TimeInterval, completion: @escaping (Bool, String, String, String) -> Void) {
+    func getHostInfo(ip: String, port: String, timeout: TimeInterval, completion: @escaping (Bool, String, String, String, String) -> Void) {
         // Create a URL from the host and port
         guard let url = URL(string: "http://\(ip):\(port)/getDeviceInfo") else {
             print("++ Error: Invalid URL for \(ip):\(port)")
-            completion(false, "", "", ip)
+            completion(false, "", "", "", ip)
             return
         }
         
@@ -237,29 +240,29 @@ class ServiceBrowser {
                         let decoder = JSONDecoder()
                         do {
                             let serverResponse = try decoder.decode(DeviceInfoResponse.self, from: data)
-                            completion(true, serverResponse.name, serverResponse.version, ip)
+                            completion(true, serverResponse.name, serverResponse.version, serverResponse.computerID, ip)
                         }
                         catch {
-                            completion(false, "", "", ip)
+                            completion(false, "", "", "", ip)
                         }
                         
                         
                         
                     }
                     else {
-                        completion(false, "", "", ip)
+                        completion(false, "", "", "", ip)
                     }
                     
                 } else {
                     print("++ Failed: Received non-success status code \(httpResponse.statusCode) for \(ip):\(port)")
-                    completion(false, "", "", ip)
+                    completion(false, "", "", "", ip)
                 }
             } else if let err = error {
                             print("++ Error: \(err.localizedDescription) for \(ip):\(port)")
-                completion(false, "", "", ip)
+                completion(false, "", "", "", ip)
             } else {
                 print("++ Unknown error for \(ip):\(port)")
-                completion(false, "", "", ip)
+                completion(false, "", "", "", ip)
             }
         }
         task.resume()
